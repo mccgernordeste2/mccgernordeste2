@@ -91,20 +91,28 @@
 
           <div class="field full">
             <label>Conte o que aconteceu</label>
-            <textarea
-              name="description"
-              required
+            <textarea name="description" id="description-hidden" class="hidden" required></textarea>
+
+            <div
+              id="description-editor"
+              class="smart-editor"
+              contenteditable="true"
               spellcheck="true"
-              placeholder="Explique o que aconteceu, o objetivo do encontro, quem participou e os principais momentos vivenciados."
-            ></textarea>
+              role="textbox"
+              aria-multiline="true"
+              data-placeholder="Explique o que aconteceu, o objetivo do encontro, quem participou e os principais momentos vivenciados."
+            ></div>
 
             <div class="writing-assistant">
               <div>
-                <strong>Ajuda para escrever</strong>
-                <p>Inclua: o que aconteceu, objetivo, participantes e principais momentos.</p>
+                <strong>Revisor de texto</strong>
+                <p>Ortografia, acentuação, maiúsculas, pontuação e gramática. As sugestões aparecem abaixo e só são aplicadas quando você clicar.</p>
               </div>
-              <button type="button" class="btn secondary" id="organize-text">Organizar texto</button>
+              <button type="button" class="btn secondary" id="organize-text">Revisar texto</button>
             </div>
+
+            <div id="proofread-status" class="proofread-status">Comece a escrever para receber sugestões.</div>
+            <div id="proofread-suggestions" class="proofread-suggestions"></div>
 
             <small id="description-counter">0 caracteres</small>
           </div>
