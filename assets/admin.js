@@ -113,7 +113,7 @@ function editSubmission(id){
  const p=state.pending.find(x=>x.id===id);if(!p)return;
  state.editingPostId=id;
  const f=document.getElementById('news-form');
- f.title.value=p.title||'';f.category.value=p.category||'Evento';setGedSelect(p.geds?.name||'');f.date.value=p.event_date||'';f.author.value=p.submitted_by_name||'';f.summary.value=p.summary||'';f.caption.value=p.photo_author||'';
+ f.title.value=p.title||'';f.category.value=p.category||'Evento';setGedSelect(p.geds?.name||'');f.date.value=p.event_date||'';f.location.value=p.location||'';f.author.value=p.submitted_by_name||'';f.summary.value=p.summary||'';f.caption.value=p.photo_author||'';
  document.getElementById('post-editor').innerHTML=p.body_html||esc(p.summary||'');
  showSection('posts');
  const submit=f.querySelector('button[type="submit"]');submit.textContent='Salvar correções';
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const editor=document.getElementById('post-editor'),newsForm=document.getElementById('news-form');
  document.getElementById('preview-post').onclick=()=>{const fd=new FormData(newsForm),p=document.getElementById('post-preview');p.innerHTML='<span class="tag">'+esc(fd.get('category'))+'</span><h2>'+esc(fd.get('title'))+'</h2><p>'+esc(fd.get('summary'))+'</p><div>'+editor.innerHTML+'</div>';p.classList.remove('hidden')};
  newsForm.onsubmit=async e=>{
-  e.preventDefault();const fd=new FormData(newsForm),gedName=String(fd.get('ged')||''),payload={title:String(fd.get('title')||'').trim(),slug:slugify(fd.get('title')),category:fd.get('category')||null,ged_id:gedIdByName(gedName),event_date:fd.get('date')||null,author_name:String(fd.get('author')||'').trim(),summary:String(fd.get('summary')||'').trim(),body_html:editor.innerHTML,cover_caption:String(fd.get('caption')||'').trim(),status:'published',published_at:new Date().toISOString(),source_type:'admin'};
+  e.preventDefault();const fd=new FormData(newsForm),gedName=String(fd.get('ged')||''),payload={title:String(fd.get('title')||'').trim(),slug:slugify(fd.get('title')),category:fd.get('category')||null,ged_id:gedIdByName(gedName),event_date:fd.get('date')||null,location:String(fd.get('location')||'').trim()||null,author_name:String(fd.get('author')||'').trim(),summary:String(fd.get('summary')||'').trim(),body_html:editor.innerHTML,cover_caption:String(fd.get('caption')||'').trim(),status:'published',published_at:new Date().toISOString(),source_type:'admin'};
   const {data:{user}}=await sb.auth.getUser();payload.created_by=user?.id||null;
   if(state.editingPostId){
    delete payload.slug;delete payload.source_type;delete payload.created_by;payload.status='draft';payload.published_at=null;
