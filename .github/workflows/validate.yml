@@ -1,0 +1,30 @@
+name: Validate portal
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: |
+          node --check assets/app.js
+          node --check assets/admin.js
+          node --check assets/publicar.js
+          node --check assets/geds.js
+          node --check assets/post.js
+          node --check assets/setup-admin.js
+          node --check assets/supabase-config.js
+      - name: Check required pages
+        run: |
+          test -f index.html
+          test -f admin.html
+          test -f publicar.html
+          test -f post.html
+          test -f geds.html
