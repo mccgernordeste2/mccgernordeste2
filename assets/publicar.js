@@ -5,16 +5,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   const formStep=document.getElementById('submission-form-step');
   const previewStep=document.getElementById('submission-preview-step');
   const successStep=document.getElementById('submission-success-step');
+  const title=form.elements.title;
+  const descriptionHidden=document.getElementById('description-hidden');
+  const editor=document.getElementById('description-editor');
+  const suggestionsBox=document.getElementById('proofread-suggestions');
+  const proofStatus=document.getElementById('proofread-status');
+  const photoInput=form.elements.photos;
+
+  let lastMatches=[];
+  let reviewTimer=null;
+  let lastReviewedText='';
 
   if(!sb){
     msg.textContent='Não foi possível conectar ao sistema.';
     msg.classList.remove('hidden');
     return;
   }
-
-  const title=form.elements.title;
-  const description=form.elements.description;
-  const photoInput=form.elements.photos;
 
   function normalizeSpaces(text){
     return String(text||'')
@@ -40,6 +46,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(value===value.toUpperCase()&&value.length>6){
       value=value.toLocaleLowerCase('pt-BR');
     }
+    value=value.replace(/\b(mcc|ged|ger)\b/gi,m=>m.toUpperCase());
     return value.charAt(0).toLocaleUpperCase('pt-BR')+value.slice(1);
   }
 
@@ -56,23 +63,250 @@ document.addEventListener('DOMContentLoaded',()=>{
     return new Date(value+'T12:00:00').toLocaleDateString('pt-BR');
   }
 
-  function updateCounters(){
-    document.getElementById('title-counter').textContent=title.value.length+'/120 caracteres';
-    document.getElementById('description-counter').textContent=description.value.length+' caracteres';
+  function getEditorText(){
+    return editor.innerText.replace(/\u00a0/g,' ').replace(/\n{3,}/g,'\n\n').trimEnd();
   }
 
-  title.addEventListener('input',updateCounters);
-  description.addEventListener('input',updateCounters);
-  updateCounters();
+  function syncEditorToHidden(){
+    descriptionHidden.value=getEditorText();
+  }
+
+  function updateCounters(){
+    syncEditorToHidden();
+    document.getElementById('title-counter').textContent=title.value.length+'/120 caracteres';
+    document.getElementById('description-counter').textContent=descriptionHidden.value.length+' caracteres';
+  }
+
+  function escapeHtml(text){
+    return String(text||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+  function getCaretOffset(){
+    const sel=window.getSelection();
+    if(!sel||!sel.rangeCount||!editor.contains(sel.anchorNode))return null;
+    const range=sel.getRangeAt(0).cloneRange();
+    const pre=range.cloneRange();
+    pre.selectNodeContents(editor);
+    pre.setEnd(range.endContainer,range.endOffset);
+    return pre.toString().length;
+  }
+
+  function setCaretOffset(offset){
+    if(offset===null||offset===undefined)return;
+    const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);
+    let pos=0,node;
+    while((node=walker.nextNode())){
+      const next=pos+node.nodeValue.length;
+      if(offset<=next){
+        const range=document.createRange();
+        range.setStart(node,Math.max(0,offset-pos));
+        range.collapse(true);
+        const sel=window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return;
+      }
+      pos=next;
+    }
+    editor.focus();
+  }
+
+  function renderHighlighted(text,matches){
+    const caret=getCaretOffset();
+    const usable=[...matches]
+      .filter(m=>m.length>0&&m.offset>=0&&m.offset+m.length<=text.length)
+      .sort((a,b)=>a.offset-b.offset);
+
+    let html='',cursor=0,issue=0;
+    for(const m of usable){
+      if(m.offset<cursor)continue;
+      html+=escapeHtml(text.slice(cursor,m.offset));
+      const wrong=text.slice(m.offset,m.offset+m.length);
+      html+='<span class="proof-error" data-proof-index="'+issue+'" title="'+escapeHtml(m.message||'Sugestão de correção')+'">'+escapeHtml(wrong)+'</span>';
+      cursor=m.offset+m.length;
+      issue++;
+    }
+    html+=escapeHtml(text.slice(cursor)).replace(/\n/g,'<br>');
+    editor.innerHTML=html;
+    setCaretOffset(caret);
+  }
+
+  function localProperNounSuggestions(text){
+    const results=[];
+    const rules=[
+      {re:/\bmcc\b/g,rep:'MCC',msg:'Sigla institucional deve ficar em maiúsculas.'},
+      {re:/\bged\b/g,rep:'GED',msg:'Sigla institucional deve ficar em maiúsculas.'},
+      {re:/\bger\b/g,rep:'GER',msg:'Sigla institucional deve ficar em maiúsculas.'},
+      {re:/\bnordeste 2\b/gi,rep:'Nordeste 2',msg:'Padronização do nome regional.'}
+    ];
+    for(const rule of rules){
+      let m;
+      while((m=rule.re.exec(text))){
+        if(m[0]===rule.rep)continue;
+        results.push({offset:m.index,length:m[0].length,replacements:[rule.rep],message:rule.msg,category:'Padronização'});
+      }
+    }
+    return results;
+  }
+
+  function mergeMatches(remote,local){
+    const all=[...remote,...local].sort((a,b)=>a.offset-b.offset||b.length-a.length);
+    const out=[];
+    for(const m of all){
+      if(out.some(x=>Math.max(x.offset,m.offset)<Math.min(x.offset+x.length,m.offset+m.length)))continue;
+      out.push(m);
+    }
+    return out;
+  }
+
+  function renderSuggestions(matches,text){
+    suggestionsBox.innerHTML='';
+    if(!matches.length){
+      proofStatus.textContent='Nenhuma correção importante encontrada.';
+      proofStatus.className='proofread-status ok';
+      return;
+    }
+
+    proofStatus.textContent=matches.length+' sugestão'+(matches.length>1?'ões':'')+' encontrada'+(matches.length>1?'s':'')+'.';
+    proofStatus.className='proofread-status has-issues';
+
+    matches.forEach((m,index)=>{
+      const wrong=text.slice(m.offset,m.offset+m.length);
+      const card=document.createElement('div');
+      card.className='proof-suggestion';
+
+      const info=document.createElement('div');
+      info.className='proof-suggestion-info';
+
+      const line=document.createElement('div');
+      line.className='proof-suggestion-line';
+
+      const bad=document.createElement('span');
+      bad.className='proof-bad';
+      bad.textContent=wrong||'trecho';
+
+      const arrow=document.createElement('span');
+      arrow.className='proof-arrow';
+      arrow.textContent='→';
+
+      line.appendChild(bad);
+
+      if(m.replacements?.length){
+        line.appendChild(arrow);
+        const good=document.createElement('strong');
+        good.className='proof-good';
+        good.textContent=m.replacements[0];
+        line.appendChild(good);
+      }
+
+      const desc=document.createElement('small');
+      desc.textContent=m.message||'Sugestão de correção';
+
+      info.append(line,desc);
+      card.appendChild(info);
+
+      if(m.replacements?.length){
+        const actions=document.createElement('div');
+        actions.className='proof-actions';
+
+        m.replacements.slice(0,3).forEach(rep=>{
+          const btn=document.createElement('button');
+          btn.type='button';
+          btn.className='proof-apply';
+          btn.textContent=rep;
+          btn.addEventListener('click',()=>applySuggestion(index,rep));
+          actions.appendChild(btn);
+        });
+
+        const ignore=document.createElement('button');
+        ignore.type='button';
+        ignore.className='proof-ignore';
+        ignore.textContent='Ignorar';
+        ignore.addEventListener('click',()=>{
+          lastMatches.splice(index,1);
+          const current=getEditorText();
+          renderHighlighted(current,lastMatches);
+          renderSuggestions(lastMatches,current);
+        });
+        actions.appendChild(ignore);
+        card.appendChild(actions);
+      }
+
+      suggestionsBox.appendChild(card);
+    });
+  }
+
+  function applySuggestion(index,replacement){
+    const m=lastMatches[index];
+    if(!m)return;
+    const text=getEditorText();
+    const updated=text.slice(0,m.offset)+replacement+text.slice(m.offset+m.length);
+    editor.textContent=updated;
+    syncEditorToHidden();
+    updateCounters();
+    reviewText(true);
+  }
+
+  async function reviewText(force=false){
+    const text=getEditorText();
+    if(text.length<3){
+      lastMatches=[];
+      proofStatus.textContent='Comece a escrever para receber sugestões.';
+      proofStatus.className='proofread-status';
+      suggestionsBox.innerHTML='';
+      return;
+    }
+    if(!force&&text===lastReviewedText)return;
+
+    proofStatus.textContent='Revisando ortografia e gramática...';
+    proofStatus.className='proofread-status checking';
+
+    try{
+      const {data,error}=await sb.functions.invoke('proofread',{body:{text}});
+      if(error)throw error;
+
+      const remote=Array.isArray(data?.matches)?data.matches:[];
+      const local=localProperNounSuggestions(text);
+      lastMatches=mergeMatches(remote,local);
+      lastReviewedText=text;
+
+      renderHighlighted(text,lastMatches);
+      renderSuggestions(lastMatches,text);
+    }catch(err){
+      console.error(err);
+      proofStatus.textContent='Não foi possível revisar automaticamente agora. O corretor nativo do navegador continua ativo.';
+      proofStatus.className='proofread-status warning';
+    }
+  }
+
+  title.addEventListener('input',()=>{
+    updateCounters();
+    clearTimeout(reviewTimer);
+    reviewTimer=setTimeout(()=>reviewText(false),1500);
+  });
+
+  editor.addEventListener('input',()=>{
+    syncEditorToHidden();
+    updateCounters();
+    clearTimeout(reviewTimer);
+    reviewTimer=setTimeout(()=>reviewText(false),1400);
+  });
+
+  editor.addEventListener('paste',e=>{
+    e.preventDefault();
+    const text=(e.clipboardData||window.clipboardData).getData('text/plain');
+    document.execCommand('insertText',false,text);
+  });
 
   document.getElementById('organize-text').addEventListener('click',()=>{
+    syncEditorToHidden();
     title.value=headlineCase(title.value);
-    description.value=sentenceCase(description.value);
     form.elements.location.value=normalizeSpaces(form.elements.location.value);
     form.elements.sourceCredit.value=normalizeSpaces(form.elements.sourceCredit.value);
     form.elements.photoAuthor.value=normalizeSpaces(form.elements.photoAuthor.value);
     form.elements.photoSource.value=normalizeSpaces(form.elements.photoSource.value);
     updateCounters();
+    reviewText(true);
   });
 
   photoInput.addEventListener('change',()=>{
@@ -100,13 +334,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 
   function buildPreview(){
+    syncEditorToHidden();
     const fd=new FormData(form);
     const files=[...photoInput.files];
     const cleanTitle=headlineCase(fd.get('title'));
     const cleanText=sentenceCase(fd.get('description'));
 
     title.value=cleanTitle;
-    description.value=cleanText;
+    descriptionHidden.value=cleanText;
+    editor.textContent=cleanText;
 
     document.getElementById('preview-ged').textContent=fd.get('ged')||'GER Nordeste 2';
     document.getElementById('preview-title').textContent=cleanTitle;
@@ -159,6 +395,15 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   form.addEventListener('submit',e=>{
     e.preventDefault();
+    syncEditorToHidden();
+
+    if(!descriptionHidden.value.trim()){
+      proofStatus.textContent='Digite o texto da matéria antes de continuar.';
+      proofStatus.className='proofread-status warning';
+      editor.focus();
+      return;
+    }
+
     if(!form.reportValidity())return;
 
     const files=[...photoInput.files];
@@ -186,11 +431,14 @@ document.addEventListener('DOMContentLoaded',()=>{
     previewStep.classList.add('hidden');
     formStep.classList.remove('hidden');
     setStep(1);
+    editor.textContent=descriptionHidden.value;
+    reviewText(true);
     window.scrollTo({top:0,behavior:'smooth'});
   });
 
   document.getElementById('confirm-submit').addEventListener('click',async()=>{
     const button=document.getElementById('confirm-submit');
+    syncEditorToHidden();
     const fd=new FormData(form);
     const files=[...photoInput.files];
 
@@ -240,9 +488,13 @@ document.addEventListener('DOMContentLoaded',()=>{
       successStep.classList.remove('hidden');
       setStep(3);
       form.reset();
+      editor.innerHTML='';
+      lastMatches=[];
+      suggestionsBox.innerHTML='';
+      proofStatus.textContent='Comece a escrever para receber sugestões.';
+      proofStatus.className='proofread-status';
       document.getElementById('selected-photos').innerHTML='';
       window.scrollTo({top:0,behavior:'smooth'});
-
     }catch(err){
       console.error(err);
       button.disabled=false;
@@ -262,4 +514,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     updateCounters();
     window.scrollTo({top:0,behavior:'smooth'});
   });
+
+  updateCounters();
 });
