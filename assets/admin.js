@@ -1,6 +1,6 @@
 const sb=window.mccSupabase;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-let state={geds:[],posts:[],pending:[],events:[],docs:[],editingPostId:null};
+let state={geds:[],posts:[],pending:[],events:[],docs:[],settings:null,editingPostId:null};
 
 function showSection(n){
  document.querySelectorAll('.admin-section').forEach(x=>x.classList.add('hidden'));
@@ -34,14 +34,15 @@ async function ensureAdmin(session){
 }
 
 async function loadData(){
- const [{data:geds},{data:posts},{data:pending},{data:events},{data:docs}]=await Promise.all([
+ const [{data:geds},{data:posts},{data:pending},{data:events},{data:docs},{data:settings}]=await Promise.all([
   sb.from('geds').select('*').order('state').order('name'),
   sb.from('posts').select('*,geds(name),post_images(*)').eq('status','published').order('published_at',{ascending:false}),
   sb.from('posts').select('*,geds(name),post_images(*)').in('status',['review','draft']).eq('source_type','public').order('created_at',{ascending:false}),
   sb.from('events').select('*,geds(name)').order('event_date',{ascending:true}),
-  sb.from('documents').select('*').order('created_at',{ascending:false})
+  sb.from('documents').select('*').order('created_at',{ascending:false}),
+  sb.from('site_settings').select('*').eq('id',1).maybeSingle()
  ]);
- state.geds=geds||[];state.posts=posts||[];state.pending=pending||[];state.events=events||[];state.docs=docs||[];
+ state.geds=geds||[];state.posts=posts||[];state.pending=pending||[];state.events=events||[];state.docs=docs||[];state.settings=settings||null;
  renderAll();
 }
 function renderAll(){
@@ -55,6 +56,7 @@ function renderAll(){
  if(id('ged-list'))id('ged-list').innerHTML=state.geds.length?state.geds.map(x=>'<div class="item"><div><h4>'+esc(x.name)+'</h4><p>'+esc(x.state)+' • '+esc(x.coordinator||'Coordenação a confirmar')+'</p></div><button class="delete" onclick="deleteGed(\''+x.id+'\')">Excluir</button></div>').join(''):'<p>Nenhum GED cadastrado.</p>';
  if(id('doc-list'))id('doc-list').innerHTML=state.docs.length?state.docs.map(x=>'<div class="item"><div><h4>'+esc(x.title)+'</h4><p>'+esc(x.category||'')+' • '+esc(x.url||'')+'</p></div><button class="delete" onclick="deleteDoc(\''+x.id+'\')">Excluir</button></div>').join(''):'<p>Nenhum documento cadastrado.</p>';
  renderPending();
+ const s=state.settings;if(s){const a=document.getElementById('preview-main-logo'),b=document.getElementById('preview-hero-image'),d=document.getElementById('preview-header-logo');if(a&&s.main_logo_url)a.src=s.main_logo_url;if(b&&s.hero_image_url)b.src=s.hero_image_url;if(d&&s.header_logo_url)d.src=s.header_logo_url;}
 }
 async function signedSubmissionUrl(path){
  const {data}=await sb.storage.from('submissions').createSignedUrl(path,1800);
@@ -190,4 +192,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
  document.getElementById('event-form').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);const {error}=await sb.from('events').insert({title:fd.get('title'),event_date:fd.get('date'),location:fd.get('location')});if(error)alert(error.message);else{e.target.reset();loadData()}};
  document.getElementById('ged-form').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);const {error}=await sb.from('geds').insert({name:fd.get('name'),state:fd.get('state'),coordinator:fd.get('coordinator')||null});if(error)alert(error.message);else{e.target.reset();loadData()}};
  document.getElementById('doc-form').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);const {error}=await sb.from('documents').insert({title:fd.get('title'),category:fd.get('category')||null,url:fd.get('url')});if(error)alert(error.message);else{e.target.reset();loadData()}};
+ const appearanceForm=document.getElementById('appearance-form');
+ if(appearanceForm)appearanceForm.onsubmit=async e=>{e.preventDefault();const msg=document.getElementById('appearance-message'),fd=new FormData(appearanceForm);msg.classList.remove('hidden');msg.textContent='Salvando aparência...';const {data:{user}}=await sb.auth.getUser();const updates={updated_at:new Date().toISOString(),updated_by:user?.id||null};for(const [field,inputName] of [['main_logo_url','main_logo'],['hero_image_url','hero_image'],['header_logo_url','header_logo']]){const file=appearanceForm.querySelector('[name="'+inputName+'"]').files[0];if(!file)continue;const ext=(file.name.split('.').pop()||'png').toLowerCase();const path=inputName+'-'+Date.now()+'.'+ext;const {error:upErr}=await sb.storage.from('site-branding').upload(path,file,{contentType:file.type,upsert:false});if(upErr){msg.textContent='Erro ao enviar '+inputName+': '+upErr.message;return}const {data:pub}=sb.storage.from('site-branding').getPublicUrl(path);updates[field]=pub.publicUrl}const {error}=await sb.from('site_settings').upsert({id:1,...updates});if(error){msg.textContent='Não foi possível salvar: '+error.message;return}msg.textContent='Aparência atualizada com sucesso.';appearanceForm.reset();await loadData()};
 });
