@@ -56,7 +56,13 @@ function renderAll(){
  if(id('ged-list'))id('ged-list').innerHTML=state.geds.length?state.geds.map(x=>'<div class="item"><div><h4>'+esc(x.name)+'</h4><p>'+esc(x.state)+' • '+esc(x.coordinator||'Coordenação a confirmar')+'</p></div><button class="delete" onclick="deleteGed(\''+x.id+'\')">Excluir</button></div>').join(''):'<p>Nenhum GED cadastrado.</p>';
  if(id('doc-list'))id('doc-list').innerHTML=state.docs.length?state.docs.map(x=>'<div class="item"><div><h4>'+esc(x.title)+'</h4><p>'+esc(x.category||'')+' • '+esc(x.url||'')+'</p></div><button class="delete" onclick="deleteDoc(\''+x.id+'\')">Excluir</button></div>').join(''):'<p>Nenhum documento cadastrado.</p>';
  renderPending();
- const s=state.settings;if(s){const a=document.getElementById('preview-main-logo'),b=document.getElementById('preview-hero-image'),d=document.getElementById('preview-header-logo');if(a&&s.main_logo_url)a.src=s.main_logo_url;if(b&&s.hero_image_url)b.src=s.hero_image_url;if(d&&s.header_logo_url)d.src=s.header_logo_url;}
+ const s=state.settings;if(s){
+  const a=document.getElementById('preview-main-logo'),b=document.getElementById('preview-hero-image'),d=document.getElementById('preview-header-logo');
+  const ea=document.getElementById('example-main-logo'),eb=document.getElementById('example-hero-image'),ed=document.getElementById('example-header-logo');
+  if(s.main_logo_url){if(a)a.src=s.main_logo_url;if(ea)ea.src=s.main_logo_url}
+  if(s.hero_image_url){if(b)b.src=s.hero_image_url;if(eb)eb.src=s.hero_image_url}
+  if(s.header_logo_url){if(d)d.src=s.header_logo_url;if(ed)ed.src=s.header_logo_url}
+ }
 }
 async function signedSubmissionUrl(path){
  const {data}=await sb.storage.from('submissions').createSignedUrl(path,1800);
@@ -125,16 +131,35 @@ window.editSubmission=editSubmission;
 function slugify(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80)+'-'+Date.now().toString(36)}
 function gedIdByName(name){return state.geds.find(g=>g.name===name)?.id||null}
 
+function bindAppearancePreviews(){
+ const form=document.getElementById('appearance-form');if(!form)return;
+ const pairs=[
+  ['header_logo','preview-header-logo','example-header-logo'],
+  ['main_logo','preview-main-logo','example-main-logo'],
+  ['hero_image','preview-hero-image','example-hero-image']
+ ];
+ pairs.forEach(([inputName,previewId,exampleId])=>{
+  const input=form.querySelector('[name="'+inputName+'"]');if(!input)return;
+  input.addEventListener('change',()=>{
+   const file=input.files?.[0];if(!file)return;
+   const url=URL.createObjectURL(file);
+   const preview=document.getElementById(previewId),example=document.getElementById(exampleId);
+   if(preview)preview.src=url;
+   if(example)example.src=url;
+  });
+ });
+}
+
 document.addEventListener('DOMContentLoaded',async()=>{
  const login=document.getElementById('login-view'),admin=document.getElementById('admin-view'),msg=document.getElementById('login-message');
  const pw=document.getElementById('admin-password');document.getElementById('toggle-password').onclick=()=>{pw.type=pw.type==='password'?'text':'password'};
  const {data:{session}}=await sb.auth.getSession();
- if(session&&await ensureAdmin(session)){showAdmin();await loadData()}else showLogin();
+ if(session&&await ensureAdmin(session)){showAdmin();await loadData();bindAppearancePreviews()}else showLogin();
  document.getElementById('login-form').onsubmit=async ev=>{
   ev.preventDefault();const fd=new FormData(ev.target);msg.textContent='Entrando...';
   const {data,error}=await sb.auth.signInWithPassword({email:String(fd.get('email')||'').trim(),password:String(fd.get('password')||'')});
   if(error){msg.textContent='E-mail ou senha inválidos.';return}
-  if(await ensureAdmin(data.session)){showAdmin();await loadData()}else showLogin('Este usuário não possui permissão administrativa. <a href="configurar-admin.html">Configurar primeiro administrador</a>.');
+  if(await ensureAdmin(data.session)){showAdmin();await loadData();bindAppearancePreviews()}else showLogin('Este usuário não possui permissão administrativa. <a href="configurar-admin.html">Configurar primeiro administrador</a>.');
  };
  document.getElementById('logout-btn').onclick=async()=>{await sb.auth.signOut();location.reload()};
  document.querySelectorAll('.sidebar nav button').forEach(b=>b.onclick=()=>showSection(b.dataset.section));
