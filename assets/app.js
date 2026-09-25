@@ -4,10 +4,28 @@ function postCard(n){return '<article class="card">'+(n.cover_url?'<a href="post
 document.addEventListener('DOMContentLoaded',async()=>{
  const b=document.querySelector('.menu-btn'),m=document.querySelector('.mobile-nav');if(b&&m)b.addEventListener('click',()=>m.classList.toggle('open'));
  const sb=window.mccSupabase;if(!sb)return;
+ const statsG=document.querySelector('[data-stat-geds]'),statsP=document.querySelector('[data-stat-posts]'),statsE=document.querySelector('[data-stat-events]');
+ if(statsG||statsP||statsE){
+  const todayStats=new Date().toISOString().slice(0,10);
+  const [gCount,pCount,eCount]=await Promise.all([
+   sb.from('geds').select('*',{count:'exact',head:true}).eq('active',true),
+   sb.from('posts').select('*',{count:'exact',head:true}).eq('status','published'),
+   sb.from('events').select('*',{count:'exact',head:true}).gte('event_date',todayStats)
+  ]);
+  if(statsG&&gCount.count!==null)statsG.textContent=gCount.count;
+  if(statsP&&pCount.count!==null)statsP.textContent=pCount.count;
+  if(statsE&&eCount.count!==null)statsE.textContent=eCount.count;
+ }
+
  const nw=document.querySelector('[data-news-list]');
  if(nw){
   const {data:posts,error}=await sb.from('posts').select('id,title,category,summary,cover_url,event_date,published_at,geds(name)').eq('status','published').order('published_at',{ascending:false}).limit(18);
   if(!error&&posts?.length)nw.innerHTML=posts.map(postCard).join('');
+ }
+ const hwf=document.querySelector('[data-home-formation]');
+ if(hwf){
+  const {data:posts}=await sb.from('posts').select('id,title,category,summary,cover_url,event_date,published_at,geds(name)').eq('status','published').eq('category','Formação').order('published_at',{ascending:false}).limit(3);
+  if(posts?.length)hwf.innerHTML=posts.map(postCard).join('');
  }
  const fw=document.querySelector('[data-formation-list]');
  if(fw){
@@ -24,6 +42,11 @@ document.addEventListener('DOMContentLoaded',async()=>{
  if(dw){
   const {data:docs}=await sb.from('documents').select('title,category,url,created_at').order('created_at',{ascending:false});
   dw.innerHTML=docs?.length?docs.map(d=>'<tr><td>'+esc(d.title)+'</td><td>'+esc(d.category||'—')+'</td><td>'+new Date(d.created_at).toLocaleDateString('pt-BR')+'</td><td><a class="btn blue" href="'+esc(d.url)+'" target="_blank" rel="noopener">Abrir</a></td></tr>').join(''):'<tr><td colspan="4">Nenhum documento publicado.</td></tr>';
+ }
+ const hgw=document.querySelector('[data-home-gallery]');
+ if(hgw){
+  const {data:imgs}=await sb.from('post_images').select('image_url,caption,posts!inner(title,status,geds(name))').eq('posts.status','published').neq('image_url','').order('created_at',{ascending:false}).limit(5);
+  if(imgs?.length)hgw.innerHTML=imgs.map(i=>'<figure><img src="'+esc(i.image_url)+'" alt="'+esc(i.caption||i.posts?.title||'')+'"><figcaption><strong>'+esc(i.posts?.title||'Galeria')+'</strong>'+(i.posts?.geds?.name?'<br>'+esc(i.posts.geds.name):'')+'</figcaption></figure>').join('');
  }
  const gw=document.querySelector('[data-gallery-list]');
  if(gw){
