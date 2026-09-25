@@ -1,1 +1,24 @@
-function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}document.addEventListener('DOMContentLoaded',async()=>{const sb=window.mccSupabase,w=document.getElementById('post-detail'),id=new URLSearchParams(location.search).get('id');if(!id){w.innerHTML='<h1>Publicação não encontrada</h1>';return}const {data:p,error}=await sb.from('posts').select('*,geds(name),post_images(*)').eq('id',id).eq('status','published').maybeSingle();if(error||!p){w.innerHTML='<h1>Publicação não encontrada</h1><p>Este conteúdo pode ter sido removido ou ainda não está publicado.</p>';return}document.title=p.title+' — GER Nordeste 2';const gallery=(p.post_images||[]).filter(i=>i.image_url).sort((a,b)=>a.sort_order-b.sort_order);w.innerHTML='<div class="section-label">'+esc(p.geds?.name||p.category||'GER NE2')+'</div><h1>'+esc(p.title)+'</h1><div class="post-meta">'+(p.event_date?new Date(p.event_date+'T12:00:00').toLocaleDateString('pt-BR'):'')+(p.location?' • '+esc(p.location):'')+(p.author_name?' • '+esc(p.author_name):'')+'</div>'+(p.cover_url?'<figure class="post-cover"><img src="'+esc(p.cover_url)+'" alt="'+esc(p.cover_caption||p.title)+'">'+(p.cover_caption?'<figcaption>'+esc(p.cover_caption)+'</figcaption>':'')+'</figure>':'')+'<div class="post-body">'+(p.body_html||'<p>'+esc(p.summary||'').replace(/\n/g,'</p><p>')+'</p>')+'</div>'+(gallery.length?'<h2>Galeria</h2><div class="post-gallery">'+gallery.map(i=>'<figure><img src="'+esc(i.image_url)+'" alt="'+esc(i.caption||p.title)+'">'+(i.caption?'<figcaption>'+esc(i.caption)+'</figcaption>':'')+'</figure>').join('')+'</div>':'')+(p.photo_author?'<p class="photo-credit">Fotos: '+esc(p.photo_author)+'</p>':'')});
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function fmt(v){return v?new Date(v+'T12:00:00').toLocaleDateString('pt-BR'):''}
+document.addEventListener('DOMContentLoaded',async()=>{
+ const sb=window.mccSupabase,w=document.getElementById('post-detail'),id=new URLSearchParams(location.search).get('id');
+ if(!id){w.innerHTML='<h1>Publicação não encontrada</h1>';return}
+ const {data:p,error}=await sb.from('posts').select('*,geds(name),post_images(*)').eq('id',id).eq('status','published').maybeSingle();
+ if(error||!p){w.innerHTML='<h1>Publicação não encontrada</h1><p>Este conteúdo pode ter sido removido ou ainda não está publicado.</p>';return}
+ document.title=p.title+' — GER Nordeste 2';
+ const gallery=(p.post_images||[]).filter(i=>i.image_url).sort((a,b)=>a.sort_order-b.sort_order);
+ const credits=[
+  p.source_credit?'<p><strong>Texto/Fonte:</strong> '+esc(p.source_credit)+'</p>':'',
+  p.photo_author?'<p><strong>Fotos:</strong> '+esc(p.photo_author)+'</p>':'',
+  p.photo_date?'<p><strong>Registro fotográfico:</strong> '+fmt(p.photo_date)+'</p>':'',
+  p.photo_source?'<p><strong>Origem das fotografias:</strong> '+esc(p.photo_source)+'</p>':''
+ ].join('');
+ w.innerHTML=
+  '<div class="section-label">'+esc(p.geds?.name||p.category||'GER NE2')+'</div>'+
+  '<h1>'+esc(p.title)+'</h1>'+
+  '<div class="post-meta">'+(p.event_date?fmt(p.event_date):'')+(p.location?' • '+esc(p.location):'')+(p.author_name?' • '+esc(p.author_name):'')+'</div>'+
+  (p.cover_url?'<figure class="post-cover"><img src="'+esc(p.cover_url)+'" alt="'+esc(p.cover_caption||p.title)+'">'+(p.cover_caption?'<figcaption>'+esc(p.cover_caption)+'</figcaption>':'')+'</figure>':'')+
+  '<div class="post-body">'+(p.body_html||'<p>'+esc(p.summary||'').replace(/\n+/g,'</p><p>')+'</p>')+'</div>'+
+  (gallery.length?'<h2>Galeria</h2><div class="post-gallery">'+gallery.map(i=>'<figure><img src="'+esc(i.image_url)+'" alt="'+esc(i.caption||p.title)+'">'+(i.caption?'<figcaption>'+esc(i.caption)+'</figcaption>':'')+'</figure>').join('')+'</div>':'')+
+  (credits?'<div class="post-credits">'+credits+'</div>':'');
+});
