@@ -10,16 +10,50 @@
 <section id="section-team" class="admin-section hidden"><div class="admin-panel"><h2>Equipe</h2><p><strong>GER Nordeste 2:</strong> Flavio Jose Alves de Albuquerque — Coordenador.</p><p><strong>GED Maceió:</strong> Thayse de Souza Mendes — Coordenadora.</p><p><strong>GED Palmeira dos Índios:</strong> Cheops Malta — Coordenador.</p><p><strong>GED Penedo:</strong> Jadson Oliveira — Coordenador.</p><p><strong>GED Mossoró:</strong> Amábilis Oliveira — Coordenadora.</p><p><strong>GED Campina Grande:</strong> Fernando — Coordenador.</p></div></section>
 <section id="section-appearance" class="admin-section hidden">
 <div class="admin-panel">
-<h2>Aparência do site</h2>
-<p>Troque as imagens principais sem precisar mexer no GitHub. As alterações ficam salvas no Supabase e aparecem automaticamente no portal.</p>
-<form id="appearance-form">
-<div class="form-grid">
-<div class="field full"><label>Logo principal do GER</label><div class="upload-box"><input type="file" name="main_logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p>Usada no destaque principal e na identidade regional.</p></div><img id="preview-main-logo" alt="" style="max-height:140px;margin-top:12px"></div>
-<div class="field full"><label>Imagem da capa</label><div class="upload-box"><input type="file" name="hero_image" accept="image/png,image/jpeg,image/webp"><p>Imagem horizontal usada no topo da página inicial e no login.</p></div><img id="preview-hero-image" alt="" style="max-height:220px;width:100%;object-fit:cover;border-radius:14px;margin-top:12px"></div>
-<div class="field full"><label>Ícone/logo do canto superior esquerdo</label><div class="upload-box"><input type="file" name="header_logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p>Usado no cabeçalho e no rodapé do portal.</p></div><img id="preview-header-logo" alt="" style="max-height:110px;margin-top:12px"></div>
+<div class="appearance-heading">
+  <div>
+    <div class="section-label">Personalização</div>
+    <h2>Aparência do site</h2>
+    <p>Altere as imagens do portal e veja uma prévia de onde cada uma será exibida antes de salvar.</p>
+  </div>
 </div>
-<div class="form-actions"><button class="btn blue">Salvar aparência</button></div>
-<div id="appearance-message" class="login-message hidden"></div>
+
+<form id="appearance-form">
+  <div class="appearance-grid">
+    <article class="appearance-card">
+      <div class="appearance-card-head"><span class="appearance-number">1</span><div><h3>Logo do portal</h3><p>Ícone exibido no canto superior esquerdo do site e também no rodapé.</p></div></div>
+      <div class="site-location-example header-example">
+        <div class="example-logo-wrap"><img id="example-header-logo" src="assets/image%20(2).png" alt="Exemplo da logo do portal"></div>
+        <div class="example-brand-copy"><strong>MCC — GER Nordeste 2</strong><small>Grupo Executivo Regional Nordeste 2</small></div>
+        <div class="example-menu">☰</div>
+      </div>
+      <div class="upload-box compact-upload"><input type="file" name="header_logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p>PNG com fundo transparente é o formato recomendado.</p></div>
+      <div class="appearance-preview-box"><span>Imagem atual / prévia</span><img id="preview-header-logo" alt="Prévia da logo do portal"></div>
+    </article>
+
+    <article class="appearance-card">
+      <div class="appearance-card-head"><span class="appearance-number">2</span><div><h3>Foto do perfil do site</h3><p>Identidade principal do GER, usada em destaques, páginas internas e áreas institucionais.</p></div></div>
+      <div class="site-location-example profile-example">
+        <div class="profile-example-circle"><img id="example-main-logo" src="assets/logo%20(3).png" alt="Exemplo da foto do perfil"></div>
+        <div><strong>GER Nordeste 2</strong><small>Identidade principal do portal</small></div>
+      </div>
+      <div class="upload-box compact-upload"><input type="file" name="main_logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p>A imagem mantém sua proporção original, sem esticar.</p></div>
+      <div class="appearance-preview-box"><span>Imagem atual / prévia</span><img id="preview-main-logo" alt="Prévia da foto do perfil"></div>
+    </article>
+  </div>
+
+  <article class="appearance-card appearance-cover-card">
+    <div class="appearance-card-head"><span class="appearance-number">3</span><div><h3>Imagem da capa</h3><p>Imagem horizontal usada no topo da página inicial e na tela de login.</p></div></div>
+    <div class="cover-location-example">
+      <img id="example-hero-image" src="assets/b1e24824-5edd-4b6e-a624-9dcbfed8383d.png" alt="Exemplo da imagem da capa">
+      <div class="cover-example-overlay"><span>Exemplo de como aparece no topo do site</span></div>
+    </div>
+    <div class="upload-box compact-upload"><input type="file" name="hero_image" accept="image/png,image/jpeg,image/webp"><p>Prefira imagens horizontais em alta qualidade.</p></div>
+    <div class="appearance-preview-box cover-preview-box"><span>Imagem atual / prévia</span><img id="preview-hero-image" alt="Prévia da capa"></div>
+  </article>
+
+  <div class="form-actions appearance-actions"><button class="btn blue">Salvar aparência</button></div>
+  <div id="appearance-message" class="login-message hidden"></div>
 </form>
 </div>
 </section>
