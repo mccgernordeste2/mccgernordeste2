@@ -1,1 +1,220 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Publique seu evento — GER Nordeste 2</title><link rel="stylesheet" href="assets/style.css"></head><body><div class="submit-shell"><div class="submit-card"><a class="backlink" href="index.html">← Voltar ao portal</a><div class="submit-head"><img src="assets/logo%20(3).png" alt="GER Nordeste 2"><div><div class="section-label">Comunicação dos GEDs</div><h1>Publique aqui o evento do seu GED</h1></div></div><div class="help-box"><strong>Como preencher:</strong> informe a data, local, objetivo do encontro, quem participou e os principais momentos vivenciados. Após o envio, o conteúdo ficará aguardando revisão e aprovação.</div><form id="publicar-form"><div class="form-grid"><div class="field"><label>Seu nome completo</label><input name="sender" required></div><div class="field"><label>Seu e-mail</label><input type="email" name="email" required></div><div class="field"><label>WhatsApp</label><input name="whatsapp"></div><div class="field"><label>GED</label><select name="ged" required><option value="">Selecione</option><option>GED Maceió</option><option>GED Palmeira dos Índios</option><option>GED Penedo</option><option>GED Patos</option><option>GED Campina Grande</option><option>GED Mossoró</option><option>GED Garanhuns</option></select></div><div class="field full"><label>Título do encontro ou evento</label><input name="title" required></div><div class="field"><label>Data do evento</label><input type="date" name="date" required></div><div class="field"><label>Local</label><input name="location" required></div><div class="field full"><label>Conte o que aconteceu</label><textarea name="description" required placeholder="Descreva como foi o encontro, o objetivo, quem participou e os principais momentos vivenciados."></textarea></div><div class="field full"><label>Fotos do evento</label><div class="upload-box"><input type="file" name="photos" accept="image/*" multiple><p>Selecione as imagens que deseja enviar para análise.</p></div></div><div class="field full"><label>Autor das fotos</label><input name="photoAuthor" placeholder="Nome de quem fez as fotos"></div></div><label class="consent"><input type="checkbox" required><span>Confirmo que as informações estão corretas e que as imagens podem ser utilizadas nos canais oficiais do MCC GER Nordeste 2.</span></label><div class="form-actions"><button class="btn blue">Enviar para análise</button></div><div id="submit-message" class="login-message hidden"></div></form></div></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/supabase-config.js"></script><script src="assets/publicar.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Publique seu evento — GER Nordeste 2</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="submit-shell">
+  <div class="submit-card editorial-submit">
+    <a class="backlink" href="index.html">← Voltar ao portal</a>
+
+    <div class="submit-head">
+      <img src="assets/logo%20(3).png" alt="GER Nordeste 2">
+      <div>
+        <div class="section-label">Comunicação dos GEDs</div>
+        <h1>Publique aqui o evento do seu GED</h1>
+        <p class="editorial-subtitle">Envie as informações como uma matéria. Antes do envio, você verá uma prévia organizada no formato do portal.</p>
+      </div>
+    </div>
+
+    <div class="help-box">
+      <strong>Como preencher:</strong>
+      escreva de forma simples. O sistema organiza espaços, pontuação e parágrafos na prévia.
+      O navegador também pode indicar palavras possivelmente incorretas enquanto você digita.
+      Nenhum texto é publicado automaticamente: a equipe do GER revisará tudo antes da publicação.
+    </div>
+
+    <div class="editorial-steps">
+      <span class="active" data-step-indicator="1">1. Informações</span>
+      <span data-step-indicator="2">2. Prévia</span>
+      <span data-step-indicator="3">3. Enviado</span>
+    </div>
+
+    <section id="submission-form-step">
+      <form id="publicar-form">
+        <div class="form-grid">
+
+          <div class="field">
+            <label>Seu nome completo</label>
+            <input name="sender" autocomplete="name" required>
+            <small>Nome de quem está enviando o material.</small>
+          </div>
+
+          <div class="field">
+            <label>Seu e-mail</label>
+            <input type="email" name="email" autocomplete="email" required>
+          </div>
+
+          <div class="field">
+            <label>WhatsApp</label>
+            <input name="whatsapp" inputmode="tel" autocomplete="tel">
+          </div>
+
+          <div class="field">
+            <label>GED</label>
+            <select name="ged" required>
+              <option value="">Selecione</option>
+              <option>GED Maceió</option>
+              <option>GED Palmeira dos Índios</option>
+              <option>GED Penedo</option>
+              <option>GED Patos</option>
+              <option>GED Campina Grande</option>
+              <option>GED Mossoró</option>
+              <option>GED Garanhuns</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label>Título da matéria</label>
+            <input
+              name="title"
+              required
+              spellcheck="true"
+              maxlength="120"
+              placeholder="Ex.: GED Penedo realiza encontro de formação em Arapiraca"
+            >
+            <small id="title-counter">0/120 caracteres</small>
+          </div>
+
+          <div class="field">
+            <label>Data do acontecimento</label>
+            <input type="date" name="date" required>
+          </div>
+
+          <div class="field">
+            <label>Local</label>
+            <input name="location" required spellcheck="true" placeholder="Cidade, local do encontro">
+          </div>
+
+          <div class="field full">
+            <label>Conte o que aconteceu</label>
+            <textarea
+              name="description"
+              required
+              spellcheck="true"
+              placeholder="Explique o que aconteceu, o objetivo do encontro, quem participou e os principais momentos vivenciados."
+            ></textarea>
+
+            <div class="writing-assistant">
+              <div>
+                <strong>Ajuda para escrever</strong>
+                <p>Inclua: o que aconteceu, objetivo, participantes e principais momentos.</p>
+              </div>
+              <button type="button" class="btn secondary" id="organize-text">Organizar texto</button>
+            </div>
+
+            <small id="description-counter">0 caracteres</small>
+          </div>
+
+          <div class="field full">
+            <label>Texto / Fonte</label>
+            <input
+              name="sourceCredit"
+              spellcheck="true"
+              placeholder="Ex.: Maria Silva — Comunicação do GED Penedo"
+            >
+            <small>Esse crédito aparece no final da matéria.</small>
+          </div>
+
+          <div class="field full">
+            <label>Fotos do evento</label>
+            <div class="upload-box editorial-upload">
+              <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple>
+              <p>Selecione até 10 imagens. Cada arquivo pode ter no máximo 8 MB.</p>
+            </div>
+            <div id="selected-photos" class="selected-photos"></div>
+          </div>
+
+          <div class="field">
+            <label>Fotografia / Crédito das fotos</label>
+            <input name="photoAuthor" spellcheck="true" placeholder="Ex.: João Oliveira">
+          </div>
+
+          <div class="field">
+            <label>Data das fotografias</label>
+            <input type="date" name="photoDate">
+          </div>
+
+          <div class="field full">
+            <label>Origem das fotografias</label>
+            <input
+              name="photoSource"
+              spellcheck="true"
+              placeholder="Ex.: Arquivo do GED Penedo / Pascom / Acervo pessoal"
+            >
+          </div>
+
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" required>
+          <span>Confirmo que as informações estão corretas e que as imagens podem ser utilizadas nos canais oficiais do MCC GER Nordeste 2.</span>
+        </label>
+
+        <div class="form-actions editorial-form-actions">
+          <button type="submit" class="btn blue">Continuar para prévia →</button>
+        </div>
+
+        <div id="submit-message" class="login-message hidden"></div>
+      </form>
+    </section>
+
+    <section id="submission-preview-step" class="hidden">
+      <div class="preview-intro">
+        <div>
+          <div class="section-label">Prévia da publicação</div>
+          <h2>Confira antes de concluir</h2>
+          <p>Veja como o conteúdo será apresentado no portal. Você ainda pode voltar e corrigir.</p>
+        </div>
+      </div>
+
+      <article class="portal-preview">
+        <div class="preview-category" id="preview-ged"></div>
+        <h1 id="preview-title"></h1>
+        <div class="preview-meta" id="preview-meta"></div>
+
+        <figure id="preview-cover-wrap" class="preview-cover hidden">
+          <img id="preview-cover" alt="Prévia da foto principal">
+        </figure>
+
+        <div id="preview-body" class="preview-body"></div>
+
+        <div id="preview-gallery" class="preview-gallery"></div>
+
+        <div class="preview-credits">
+          <p id="preview-source-row" class="hidden"><strong>Texto/Fonte:</strong> <span id="preview-source"></span></p>
+          <p id="preview-photo-author-row" class="hidden"><strong>Fotos:</strong> <span id="preview-photo-author"></span></p>
+          <p id="preview-photo-date-row" class="hidden"><strong>Registro fotográfico:</strong> <span id="preview-photo-date"></span></p>
+          <p id="preview-photo-source-row" class="hidden"><strong>Origem das fotografias:</strong> <span id="preview-photo-source"></span></p>
+        </div>
+      </article>
+
+      <div class="preview-actions">
+        <button type="button" class="btn secondary" id="back-to-form">← Voltar e corrigir</button>
+        <button type="button" class="btn blue" id="confirm-submit">Concluir e enviar para análise</button>
+      </div>
+    </section>
+
+    <section id="submission-success-step" class="hidden">
+      <div class="submission-success">
+        <div class="success-icon">✓</div>
+        <div class="section-label">Envio concluído</div>
+        <h2>Publicação enviada com sucesso</h2>
+        <p>O conteúdo entrou na fila da equipe de comunicação do GER Nordeste 2. Ele será revisado, corrigido quando necessário e publicado somente após aprovação.</p>
+        <div class="success-actions">
+          <a class="btn blue" href="index.html">Voltar ao portal</a>
+          <button type="button" class="btn secondary" id="new-submission">Enviar outro evento</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-config.js"></script>
+<script src="assets/publicar.js"></script>
+</body>
+</html>
