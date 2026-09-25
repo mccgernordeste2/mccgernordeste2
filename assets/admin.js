@@ -140,20 +140,50 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const editor=document.getElementById('post-editor'),newsForm=document.getElementById('news-form');
  document.getElementById('preview-post').onclick=()=>{const fd=new FormData(newsForm),p=document.getElementById('post-preview');p.innerHTML='<span class="tag">'+esc(fd.get('category'))+'</span><h2>'+esc(fd.get('title'))+'</h2><p>'+esc(fd.get('summary'))+'</p><div>'+editor.innerHTML+'</div>';p.classList.remove('hidden')};
  newsForm.onsubmit=async e=>{
-  e.preventDefault();const fd=new FormData(newsForm),gedName=String(fd.get('ged')||''),payload={title:String(fd.get('title')||'').trim(),slug:slugify(fd.get('title')),category:fd.get('category')||null,ged_id:gedIdByName(gedName),event_date:fd.get('date')||null,location:String(fd.get('location')||'').trim()||null,author_name:String(fd.get('author')||'').trim(),summary:String(fd.get('summary')||'').trim(),body_html:editor.innerHTML,cover_caption:String(fd.get('caption')||'').trim(),status:'published',published_at:new Date().toISOString(),source_type:'admin'};
+  e.preventDefault();
+  const fd=new FormData(newsForm),gedName=String(fd.get('ged')||''),payload={
+   title:String(fd.get('title')||'').trim(),
+   slug:slugify(fd.get('title')),
+   category:fd.get('category')||null,
+   ged_id:gedIdByName(gedName),
+   event_date:fd.get('date')||null,
+   location:String(fd.get('location')||'').trim()||null,
+   author_name:String(fd.get('author')||'').trim(),
+   summary:String(fd.get('summary')||'').trim(),
+   body_html:editor.innerHTML,
+   cover_caption:String(fd.get('caption')||'').trim(),
+   status:'published',
+   published_at:new Date().toISOString(),
+   source_type:'admin'
+  };
   const {data:{user}}=await sb.auth.getUser();payload.created_by=user?.id||null;
+  let postId=null;
   if(state.editingPostId){
-   delete payload.slug;delete payload.source_type;delete payload.created_by;payload.status='draft';payload.published_at=null;
-   const {error}=await sb.from('posts').update(payload).eq('id',state.editingPostId);if(error){alert(error.message);return}
+   postId=state.editingPostId;
+   delete payload.slug;delete payload.source_type;delete payload.created_by;
+   payload.status='draft';payload.published_at=null;
+   const {error}=await sb.from('posts').update(payload).eq('id',postId);
+   if(error){alert(error.message);return}
    state.editingPostId=null;newsForm.querySelector('button[type="submit"]').textContent='Publicar';
   }else{
-   const {data:post,error}=await sb.from('posts').insert(payload).select('id').single();if(error){alert(error.message);return}
-   const file=newsForm.querySelector('input[name="cover"]').files[0];
-   if(file){
-    const ext=(file.name.split('.').pop()||'jpg').toLowerCase(),path=post.id+'/cover-'+crypto.randomUUID()+'.'+ext;
-    const {error:upErr}=await sb.storage.from('post-media').upload(path,file,{contentType:file.type,upsert:false});
-    if(!upErr){const {data:pub}=sb.storage.from('post-media').getPublicUrl(path);await sb.from('posts').update({cover_url:pub.publicUrl}).eq('id',post.id)}
-   }
+   const {data:post,error}=await sb.from('posts').insert(payload).select('id').single();
+   if(error){alert(error.message);return}
+   postId=post.id;
+  }
+  const coverFile=newsForm.querySelector('input[name="cover"]').files[0];
+  if(coverFile){
+   const ext=(coverFile.name.split('.').pop()||'jpg').toLowerCase(),path=postId+'/cover-'+crypto.randomUUID()+'.'+ext;
+   const {error:upErr}=await sb.storage.from('post-media').upload(path,coverFile,{contentType:coverFile.type,upsert:false});
+   if(!upErr){const {data:pub}=sb.storage.from('post-media').getPublicUrl(path);await sb.from('posts').update({cover_url:pub.publicUrl}).eq('id',postId)}
+  }
+  const galleryFiles=[...newsForm.querySelector('input[name="gallery"]').files].slice(0,20);
+  let order=100;
+  for(const file of galleryFiles){
+   const ext=(file.name.split('.').pop()||'jpg').toLowerCase(),path=postId+'/'+crypto.randomUUID()+'.'+ext;
+   const {error:upErr}=await sb.storage.from('post-media').upload(path,file,{contentType:file.type,upsert:false});
+   if(upErr)continue;
+   const {data:pub}=sb.storage.from('post-media').getPublicUrl(path);
+   await sb.from('post_images').insert({post_id:postId,image_url:pub.publicUrl,storage_path:path,source_bucket:'post-media',sort_order:order++});
   }
   newsForm.reset();editor.innerHTML='';await loadData()
  };
