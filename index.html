@@ -1,194 +1,1737 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Portal oficial do Movimento de Cursilhos de Cristandade — GER Nordeste 2. Notícias, agenda, formação, GEDs, documentos e memória regional.">
-<title>MCC GER Nordeste 2</title>
-<link rel="stylesheet" href="assets/style.css">
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <meta
+    name="description"
+    content="Portal oficial do Movimento de Cursilhos de Cristandade — GER Nordeste 2. Notícias, agenda, formação, GEDs, documentos e memória regional."
+  >
+
+  <title>MCC GER Nordeste 2</title>
+
+  <link rel="stylesheet" href="assets/style.css">
+
+  <!--
+    AJUSTES ESPECÍFICOS DA HOME
+    Mantidos aqui para você conseguir trocar o index.html inteiro
+    sem precisar editar o style.css agora.
+  -->
+  <style>
+
+    /* =========================================================
+       DUAS LOGOS NO CABEÇALHO
+       ========================================================= */
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-logos {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex: 0 0 auto;
+    }
+
+    .brand-logos img {
+      display: block;
+      width: auto !important;
+      height: auto !important;
+
+      object-fit: contain !important;
+      object-position: center !important;
+
+      aspect-ratio: auto !important;
+    }
+
+    /* Logo do MCC */
+    .brand-portal-logo {
+      max-width: 56px !important;
+      max-height: 56px !important;
+    }
+
+    /* Logo do GER:
+       escondida no cabeçalho do computador
+       para não mexer no layout que já está bom */
+    .brand-ger-logo {
+      display: none !important;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+    }
+
+    .brand-text small {
+      display: block;
+    }
+
+
+    /* =========================================================
+       LOGOS EXCLUSIVAS DA CAPA NO CELULAR
+       ========================================================= */
+
+    .hero-mobile-identities {
+      display: none;
+    }
+
+
+    /* =========================================================
+       CAPA DESKTOP
+       Mantemos o desktop praticamente como já está.
+       ========================================================= */
+
+    .home-hero {
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+
+    /* =========================================================
+       CELULAR / TABLET
+       ========================================================= */
+
+    @media (max-width: 1050px) {
+
+      /*
+        O selo grande do desktop continua escondido
+        no celular para não ocupar muito espaço.
+      */
+      .hero-seal {
+        display: none !important;
+      }
+
+      /*
+        Mostra as duas identidades dentro da capa.
+      */
+      .hero-mobile-identities {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin-bottom: 18px;
+      }
+
+      .hero-mobile-logo-card {
+        width: 76px;
+        height: 76px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 8px;
+
+        border-radius: 18px;
+
+        background: rgba(255, 255, 255, .94);
+
+        border:
+          1px solid rgba(255, 255, 255, .55);
+
+        box-shadow:
+          0 12px 28px rgba(0, 0, 0, .16);
+
+        backdrop-filter: blur(8px);
+      }
+
+      .hero-mobile-logo-card img {
+        display: block;
+
+        width: auto !important;
+        height: auto !important;
+
+        max-width: 100% !important;
+        max-height: 100% !important;
+
+        object-fit: contain !important;
+        object-position: center !important;
+
+        aspect-ratio: auto !important;
+      }
+    }
+
+
+    @media (max-width: 720px) {
+
+      /* =====================================================
+         CABEÇALHO MOBILE
+         ===================================================== */
+
+      .header-inner {
+        min-height: 86px;
+        gap: 10px;
+      }
+
+      .brand {
+        gap: 9px;
+
+        max-width: calc(100% - 74px);
+      }
+
+      .brand-logos {
+        gap: 4px;
+      }
+
+      /* Logo do portal / MCC */
+      .brand-portal-logo {
+        max-width: 44px !important;
+        max-height: 44px !important;
+      }
+
+      /* Agora mostra a logo do GER ao lado */
+      .brand-ger-logo {
+        display: block !important;
+
+        max-width: 40px !important;
+        max-height: 40px !important;
+      }
+
+      .brand-text strong {
+        font-size: 15px;
+        line-height: 1.15;
+
+        white-space: normal;
+      }
+
+      .brand-text small {
+        display: none !important;
+      }
+
+      .menu-btn {
+        flex: 0 0 auto;
+      }
+
+
+      /* =====================================================
+         CAPA MOBILE
+         ===================================================== */
+
+      .home-hero {
+        min-height: 790px;
+
+        /*
+          Prioriza o globo da imagem no celular.
+
+          O globo está mais para o lado esquerdo da foto,
+          então usamos cerca de 31% na horizontal.
+        */
+        background-position: 31% center !important;
+
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+      }
+
+      /*
+        Escurece um pouco mais o lado esquerdo,
+        mantendo o globo visível sem prejudicar o texto.
+      */
+      .home-hero::before {
+        content: "";
+
+        position: absolute;
+        inset: 0;
+
+        z-index: 0;
+
+        pointer-events: none;
+
+        background:
+          linear-gradient(
+            180deg,
+            rgba(4, 34, 72, .58) 0%,
+            rgba(4, 34, 72, .43) 50%,
+            rgba(4, 34, 72, .53) 100%
+          );
+      }
+
+      .home-hero .container {
+        position: relative;
+        z-index: 2;
+
+        display: block !important;
+      }
+
+      .home-hero .hero-copy {
+        max-width: 100% !important;
+      }
+
+
+      /* Logos dentro da capa */
+
+      .hero-mobile-identities {
+        padding-top: 5px;
+      }
+
+      .hero-mobile-logo-card {
+        width: 68px;
+        height: 68px;
+
+        border-radius: 16px;
+      }
+
+
+      /* Textos */
+
+      .home-hero .eyebrow {
+        max-width: 92%;
+
+        font-size: 12px;
+        line-height: 1.35;
+
+        letter-spacing: 2.5px;
+      }
+
+      .home-hero h1 {
+        font-size: clamp(39px, 11.5vw, 58px) !important;
+
+        line-height: .99 !important;
+
+        margin-top: 14px;
+      }
+
+      .home-hero h2 {
+        font-size: clamp(29px, 8vw, 38px) !important;
+
+        line-height: 1.1;
+
+        margin-top: 22px;
+      }
+
+      .home-hero p {
+        max-width: 100%;
+
+        font-size: 17px !important;
+        line-height: 1.7 !important;
+
+        text-shadow:
+          0 2px 10px rgba(0, 0, 0, .22);
+      }
+
+
+      /* Botões */
+
+      .home-hero .actions {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        gap: 11px;
+
+        margin-top: 26px;
+      }
+
+      .home-hero .actions .btn {
+        width: fit-content;
+
+        min-height: 58px;
+
+        padding:
+          14px 20px;
+
+        border-radius: 13px;
+      }
+
+
+      /* Cards começam depois da capa */
+
+      .quick-wrap {
+        position: relative;
+
+        z-index: 8;
+
+        margin-top: -28px !important;
+      }
+    }
+
+
+    /* =========================================================
+       CELULAR PEQUENO
+       ========================================================= */
+
+    @media (max-width: 430px) {
+
+      .brand-portal-logo {
+        max-width: 40px !important;
+        max-height: 40px !important;
+      }
+
+      .brand-ger-logo {
+        max-width: 35px !important;
+        max-height: 35px !important;
+      }
+
+      .brand-text strong {
+        font-size: 14px;
+      }
+
+      .home-hero {
+        /*
+          Pequeno ajuste para telas mais estreitas.
+        */
+        background-position: 29% center !important;
+
+        min-height: 760px;
+      }
+
+      .hero-mobile-logo-card {
+        width: 62px;
+        height: 62px;
+      }
+
+      .home-hero h1 {
+        font-size: clamp(37px, 11vw, 50px) !important;
+      }
+
+      .home-hero p {
+        font-size: 16px !important;
+      }
+    }
+
+
+    /* =========================================================
+       ANIMAÇÃO SUAVE DAS LOGOS MOBILE
+       ========================================================= */
+
+    @media (max-width: 1050px) {
+
+      .hero-mobile-logo-card {
+        animation:
+          mobileLogoEntrance .65s ease both;
+      }
+
+      .hero-mobile-logo-card:nth-child(2) {
+        animation-delay: .12s;
+      }
+    }
+
+    @keyframes mobileLogoEntrance {
+
+      from {
+        opacity: 0;
+        transform:
+          translateY(12px)
+          scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateY(0)
+          scale(1);
+      }
+    }
+
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .hero-mobile-logo-card {
+        animation: none !important;
+      }
+    }
+
+  </style>
+
 </head>
+
+
 <body>
 
-<div class="top-strip">
-  <div class="container">
-    <span>Movimento de Cursilhos de Cristandade — GER Nordeste 2</span>
-    <span>Alagoas • Paraíba • Pernambuco • Rio Grande do Norte</span>
-  </div>
-</div>
 
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="index.html">
-      <img data-header-logo src="assets/image%20(2).png" alt="Movimento de Cursilhos de Cristandade">
-      <div><strong>MCC — GER Nordeste 2</strong><small>Grupo Executivo Regional Nordeste 2</small></div>
-    </a>
-    <nav class="desktop-nav">
-      <a class="active" href="index.html">Início</a>
-      <a href="ger.html">GER NE2</a>
-      <a href="geds.html">GEDs</a>
-      <a href="noticias.html">Notícias</a>
-      <a href="agenda.html">Agenda</a>
-      <a href="formacao.html">Formação</a>
-      <a href="documentos.html">Documentos</a>
-      <a href="galeria.html">Galeria</a>
-      <a class="nav-publish" href="publicar.html">Publique seu evento</a>
-      <a class="admin-link" href="admin.html">Admin</a>
+  <!-- =========================================================
+       FAIXA SUPERIOR
+       ========================================================= -->
+
+  <div class="top-strip">
+
+    <div class="container">
+
+      <span>
+        Movimento de Cursilhos de Cristandade — GER Nordeste 2
+      </span>
+
+      <span>
+        Alagoas • Paraíba • Pernambuco • Rio Grande do Norte
+      </span>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================================
+       CABEÇALHO
+       ========================================================= -->
+
+  <header class="site-header">
+
+    <div class="container header-inner">
+
+
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Página inicial do MCC GER Nordeste 2"
+      >
+
+        <div class="brand-logos">
+
+          <!--
+            LOGO DO PORTAL:
+            controlada pelo painel administrativo
+          -->
+          <img
+            data-header-logo
+            class="brand-portal-logo"
+            src="assets/image%20(2).png"
+            alt="Movimento de Cursilhos de Cristandade"
+          >
+
+
+          <!--
+            FOTO DO PERFIL / LOGO PRINCIPAL DO GER.
+            Aparece ao lado da primeira somente no celular.
+          -->
+          <img
+            data-main-logo
+            class="brand-ger-logo"
+            src="assets/logo%20(3).png"
+            alt="GER Nordeste 2"
+          >
+
+        </div>
+
+
+        <div class="brand-text">
+
+          <strong>
+            MCC — GER Nordeste 2
+          </strong>
+
+          <small>
+            Grupo Executivo Regional Nordeste 2
+          </small>
+
+        </div>
+
+      </a>
+
+
+
+      <nav class="desktop-nav">
+
+        <a
+          class="active"
+          href="index.html"
+        >
+          Início
+        </a>
+
+        <a href="ger.html">
+          GER NE2
+        </a>
+
+        <a href="geds.html">
+          GEDs
+        </a>
+
+        <a href="noticias.html">
+          Notícias
+        </a>
+
+        <a href="agenda.html">
+          Agenda
+        </a>
+
+        <a href="formacao.html">
+          Formação
+        </a>
+
+        <a href="documentos.html">
+          Documentos
+        </a>
+
+        <a href="galeria.html">
+          Galeria
+        </a>
+
+        <a
+          class="nav-publish"
+          href="publicar.html"
+        >
+          Publique seu evento
+        </a>
+
+        <a
+          class="admin-link"
+          href="admin.html"
+        >
+          Admin
+        </a>
+
+      </nav>
+
+
+
+      <button
+        class="menu-btn"
+        aria-label="Abrir menu"
+        type="button"
+      >
+        ☰
+      </button>
+
+    </div>
+
+
+
+    <nav class="mobile-nav">
+
+      <a href="index.html">
+        Início
+      </a>
+
+      <a href="ger.html">
+        GER NE2
+      </a>
+
+      <a href="geds.html">
+        GEDs
+      </a>
+
+      <a href="noticias.html">
+        Notícias
+      </a>
+
+      <a href="agenda.html">
+        Agenda
+      </a>
+
+      <a href="formacao.html">
+        Formação
+      </a>
+
+      <a href="documentos.html">
+        Documentos
+      </a>
+
+      <a href="galeria.html">
+        Galeria
+      </a>
+
+      <a href="contato.html">
+        Contato
+      </a>
+
+      <a
+        class="nav-publish"
+        href="publicar.html"
+      >
+        Publique seu evento
+      </a>
+
+      <a
+        class="admin-link"
+        href="admin.html"
+      >
+        Área administrativa
+      </a>
+
     </nav>
-    <button class="menu-btn" aria-label="Abrir menu">☰</button>
-  </div>
-  <nav class="mobile-nav">
-    <a href="index.html">Início</a><a href="ger.html">GER NE2</a><a href="geds.html">GEDs</a>
-    <a href="noticias.html">Notícias</a><a href="agenda.html">Agenda</a><a href="formacao.html">Formação</a>
-    <a href="documentos.html">Documentos</a><a href="galeria.html">Galeria</a><a href="contato.html">Contato</a>
-    <a class="nav-publish" href="publicar.html">Publique seu evento</a><a class="admin-link" href="admin.html">Área administrativa</a>
-  </nav>
-</header>
 
-<section class="hero home-hero" data-hero>
-  <div class="container">
-    <div class="hero-copy">
-      <div class="eyebrow">De cristãos para um mundo mais humano</div>
-      <h1>Movimento de Cursilhos de Cristandade</h1>
-      <h2>GER Nordeste 2</h2>
-      <p>Um espaço de comunhão, formação, memória e evangelização para fortalecer os GEDs e transformar os ambientes à luz do Evangelho.</p>
-      <div class="actions">
-        <a class="btn primary" href="ger.html">Conheça o GER NE2 →</a>
-        <a class="btn secondary" href="agenda.html">Ver agenda</a>
-        <a class="btn ghost-light" href="publicar.html">Enviar evento do GED</a>
+  </header>
+
+
+
+  <!-- =========================================================
+       CAPA PRINCIPAL
+       ========================================================= -->
+
+  <section
+    class="hero home-hero"
+    data-hero
+  >
+
+    <div class="container">
+
+
+      <div class="hero-copy">
+
+
+        <!--
+          NO COMPUTADOR:
+          essas logos ficam escondidas.
+
+          NO CELULAR:
+          aparecem as duas juntas.
+        -->
+
+        <div class="hero-mobile-identities">
+
+          <div class="hero-mobile-logo-card">
+
+            <img
+              data-header-logo
+              src="assets/image%20(2).png"
+              alt="Movimento de Cursilhos de Cristandade"
+            >
+
+          </div>
+
+
+          <div class="hero-mobile-logo-card">
+
+            <img
+              data-main-logo
+              src="assets/logo%20(3).png"
+              alt="GER Nordeste 2"
+            >
+
+          </div>
+
+        </div>
+
+
+
+        <div class="eyebrow">
+
+          De cristãos para um mundo mais humano
+
+        </div>
+
+
+        <h1>
+
+          Movimento de Cursilhos de Cristandade
+
+        </h1>
+
+
+        <h2>
+
+          GER Nordeste 2
+
+        </h2>
+
+
+        <p>
+
+          Um espaço de comunhão, formação, memória e
+          evangelização para fortalecer os GEDs e transformar
+          os ambientes à luz do Evangelho.
+
+        </p>
+
+
+
+        <div class="actions">
+
+          <a
+            class="btn primary"
+            href="ger.html"
+          >
+
+            Conheça o GER NE2 →
+
+          </a>
+
+
+          <a
+            class="btn secondary"
+            href="agenda.html"
+          >
+
+            Ver agenda
+
+          </a>
+
+
+          <a
+            class="btn ghost-light"
+            href="publicar.html"
+          >
+
+            Enviar evento do GED
+
+          </a>
+
+        </div>
+
       </div>
-    </div>
-    <div class="hero-seal" aria-hidden="true">
-      <img data-main-logo src="assets/logo%20(3).png" alt="">
-    </div>
-  </div>
-</section>
 
-<div class="quick-wrap">
-  <div class="container quick-grid">
-    <a class="quick" href="ger.html"><div class="icon">◎</div><div><h3>Estrutura Regional</h3><p>Coordenação, missão e organização do GER Nordeste 2.</p></div></a>
-    <a class="quick" href="geds.html"><div class="icon">⌖</div><div><h3>GEDs por Estado</h3><p>Conheça os grupos diocesanos e suas coordenações.</p></div></a>
-    <a class="quick" href="formacao.html"><div class="icon">♡</div><div><h3>Formação</h3><p>Subsídios para dirigentes, cursilhistas e equipes.</p></div></a>
-    <a class="quick" href="documentos.html"><div class="icon">▤</div><div><h3>Documentos</h3><p>Materiais, orientações e documentos oficiais.</p></div></a>
-  </div>
-</div>
 
-<section class="section home-stats-section">
-  <div class="container">
-    <div class="home-stats">
-      <div class="home-stat"><strong>4</strong><span>Estados</span><small>AL • PB • PE • RN</small></div>
-      <div class="home-stat"><strong data-stat-geds>7</strong><span>GEDs cadastrados</span><small>Integração regional</small></div>
-      <div class="home-stat"><strong data-stat-posts>0</strong><span>Publicações</span><small>Notícias e memória</small></div>
-      <div class="home-stat"><strong data-stat-events>0</strong><span>Eventos futuros</span><small>Agenda regional</small></div>
-    </div>
-  </div>
-</section>
 
-<section class="section alt">
-  <div class="container">
-    <div class="section-head">
-      <div><div class="section-label">Comunicação</div><h2>Últimas notícias</h2><p>Notícias publicadas pelo GER e pelos GEDs, revisadas pela equipe de comunicação.</p></div>
-      <a class="section-link" href="noticias.html">Ver todas as notícias →</a>
-    </div>
-    <div class="grid-3 home-news" data-news-list>
-      <article class="card"><div class="placeholder">✦</div><div class="card-body"><span class="tag">GER NE2</span><h3>As próximas notícias aparecerão aqui</h3><p>O conteúdo publicado pelo painel é exibido automaticamente.</p></div></article>
-    </div>
-  </div>
-</section>
+      <!--
+        LOGO GRANDE DO GER NO COMPUTADOR
+      -->
 
-<section class="section">
-  <div class="container home-agenda-grid">
-    <div>
-      <div class="section-label">Calendário</div>
-      <h2 class="home-title">Próximos eventos</h2>
-      <p class="home-lead">Assembleias, formações, encontros e atividades dos GEDs reunidos em uma agenda regional.</p>
-      <a class="btn blue" href="agenda.html">Abrir agenda completa →</a>
-    </div>
-    <div class="panel home-events-panel">
-      <div data-event-list>
-        <div class="event"><div class="datebox"><small>—</small><strong>—</strong></div><div><h4>Nenhum evento cadastrado</h4><p>A agenda será atualizada pelo painel administrativo.</p></div><span>→</span></div>
+      <div
+        class="hero-seal"
+        aria-hidden="true"
+      >
+
+        <img
+          data-main-logo
+          src="assets/logo%20(3).png"
+          alt=""
+        >
+
       </div>
-    </div>
-  </div>
-</section>
 
-<section class="section home-region-section">
-  <div class="container">
-    <div class="section-head light-head">
-      <div><div class="section-label">Presença regional</div><h2>Quatro estados, uma caminhada</h2><p>Clique em um estado para conhecer seus GEDs e coordenações.</p></div>
-      <a class="section-link light-link" href="geds.html">Ver todos os GEDs →</a>
-    </div>
-    <div class="home-state-grid">
-      <a class="home-state-card" href="geds.html?state=Alagoas"><span>AL</span><strong>Alagoas</strong><small>Maceió • Palmeira dos Índios • Penedo</small></a>
-      <a class="home-state-card" href="geds.html?state=Paraíba"><span>PB</span><strong>Paraíba</strong><small>Patos • Campina Grande</small></a>
-      <a class="home-state-card" href="geds.html?state=Pernambuco"><span>PE</span><strong>Pernambuco</strong><small>Garanhuns</small></a>
-      <a class="home-state-card" href="geds.html?state=Rio%20Grande%20do%20Norte"><span>RN</span><strong>Rio Grande do Norte</strong><small>Mossoró</small></a>
-    </div>
-  </div>
-</section>
 
-<section class="section">
-  <div class="container">
-    <div class="publish-cta home-publish-cta">
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       ATALHOS
+       ========================================================= -->
+
+  <div class="quick-wrap">
+
+    <div class="container quick-grid">
+
+
+      <a
+        class="quick"
+        href="ger.html"
+      >
+
+        <div class="icon">
+          ◎
+        </div>
+
+        <div>
+
+          <h3>
+            Estrutura Regional
+          </h3>
+
+          <p>
+            Coordenação, missão e organização do GER Nordeste 2.
+          </p>
+
+        </div>
+
+      </a>
+
+
+
+      <a
+        class="quick"
+        href="geds.html"
+      >
+
+        <div class="icon">
+          ⌖
+        </div>
+
+        <div>
+
+          <h3>
+            GEDs por Estado
+          </h3>
+
+          <p>
+            Conheça os grupos diocesanos e suas coordenações.
+          </p>
+
+        </div>
+
+      </a>
+
+
+
+      <a
+        class="quick"
+        href="formacao.html"
+      >
+
+        <div class="icon">
+          ♡
+        </div>
+
+        <div>
+
+          <h3>
+            Formação
+          </h3>
+
+          <p>
+            Subsídios para dirigentes, cursilhistas e equipes.
+          </p>
+
+        </div>
+
+      </a>
+
+
+
+      <a
+        class="quick"
+        href="documentos.html"
+      >
+
+        <div class="icon">
+          ▤
+        </div>
+
+        <div>
+
+          <h3>
+            Documentos
+          </h3>
+
+          <p>
+            Materiais, orientações e documentos oficiais.
+          </p>
+
+        </div>
+
+      </a>
+
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================================
+       NÚMEROS
+       ========================================================= -->
+
+  <section class="section home-stats-section">
+
+    <div class="container">
+
+      <div class="home-stats">
+
+
+        <div class="home-stat">
+
+          <strong>
+            4
+          </strong>
+
+          <span>
+            Estados
+          </span>
+
+          <small>
+            AL • PB • PE • RN
+          </small>
+
+        </div>
+
+
+
+        <div class="home-stat">
+
+          <strong data-stat-geds>
+            7
+          </strong>
+
+          <span>
+            GEDs cadastrados
+          </span>
+
+          <small>
+            Integração regional
+          </small>
+
+        </div>
+
+
+
+        <div class="home-stat">
+
+          <strong data-stat-posts>
+            0
+          </strong>
+
+          <span>
+            Publicações
+          </span>
+
+          <small>
+            Notícias e memória
+          </small>
+
+        </div>
+
+
+
+        <div class="home-stat">
+
+          <strong data-stat-events>
+            0
+          </strong>
+
+          <span>
+            Eventos futuros
+          </span>
+
+          <small>
+            Agenda regional
+          </small>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       NOTÍCIAS
+       ========================================================= -->
+
+  <section class="section alt">
+
+    <div class="container">
+
+
+      <div class="section-head">
+
+        <div>
+
+          <div class="section-label">
+            Comunicação
+          </div>
+
+          <h2>
+            Últimas notícias
+          </h2>
+
+          <p>
+            Notícias publicadas pelo GER e pelos GEDs,
+            revisadas pela equipe de comunicação.
+          </p>
+
+        </div>
+
+
+        <a
+          class="section-link"
+          href="noticias.html"
+        >
+          Ver todas as notícias →
+        </a>
+
+      </div>
+
+
+
+      <div
+        class="grid-3 home-news"
+        data-news-list
+      >
+
+        <article class="card">
+
+          <div class="placeholder">
+            ✦
+          </div>
+
+          <div class="card-body">
+
+            <span class="tag">
+              GER NE2
+            </span>
+
+            <h3>
+              As próximas notícias aparecerão aqui
+            </h3>
+
+            <p>
+              O conteúdo publicado pelo painel é exibido
+              automaticamente.
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       AGENDA
+       ========================================================= -->
+
+  <section class="section">
+
+    <div class="container home-agenda-grid">
+
+
       <div>
-        <div class="eyebrow">Comunicação dos GEDs</div>
-        <h2>Seu GED realizou um encontro?</h2>
-        <p>Envie as informações e as fotos. O material entra na fila editorial, passa por revisão da equipe e só depois é publicado no portal oficial.</p>
-        <div class="publish-steps"><span>1. Envie</span><span>2. Revisamos</span><span>3. Publicamos</span></div>
+
+        <div class="section-label">
+          Calendário
+        </div>
+
+        <h2 class="home-title">
+          Próximos eventos
+        </h2>
+
+        <p class="home-lead">
+
+          Assembleias, formações, encontros e atividades dos
+          GEDs reunidos em uma agenda regional.
+
+        </p>
+
+
+        <a
+          class="btn blue"
+          href="agenda.html"
+        >
+          Abrir agenda completa →
+        </a>
+
       </div>
-      <a class="btn primary" href="publicar.html">Publique aqui o evento do seu GED →</a>
-    </div>
-  </div>
-</section>
 
-<section class="section alt">
-  <div class="container">
-    <div class="section-head">
-      <div><div class="section-label">Formação e espiritualidade</div><h2>Conteúdos para a caminhada</h2><p>Subsídios e reflexões para dirigentes, equipes e cursilhistas.</p></div>
-      <a class="section-link" href="formacao.html">Ver formação →</a>
-    </div>
-    <div class="grid-3" data-home-formation>
-      <article class="card"><div class="card-body"><span class="tag">Formação</span><h3>Novos conteúdos aparecerão aqui</h3><p>Publique materiais da categoria Formação pelo painel administrativo.</p></div></article>
-    </div>
-  </div>
-</section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head">
-      <div><div class="section-label">Memória regional</div><h2>Galeria recente</h2><p>Registros dos encontros e atividades publicados pelos GEDs.</p></div>
-      <a class="section-link" href="galeria.html">Abrir galeria →</a>
-    </div>
-    <div class="home-gallery" data-home-gallery>
-      <div class="home-gallery-empty">As fotos das publicações aprovadas aparecerão aqui.</div>
-    </div>
-  </div>
-</section>
 
-<section class="section home-identity">
-  <div class="container region-grid">
-    <div class="region-copy">
-      <div class="section-label">Identidade regional</div>
-      <h2>GER Nordeste 2</h2>
-      <p>O portal reúne a caminhada regional em um só lugar: coordenação, GEDs, agenda, notícias, formação, documentos e a memória de nossa missão.</p>
-      <a class="btn blue" href="ger.html">Conheça nossa estrutura →</a>
-    </div>
-    <div class="region-logo-wrap"><img data-main-logo src="assets/logo%20(3).png" alt="Logo GER Nordeste 2"></div>
-  </div>
-</section>
+      <div class="panel home-events-panel">
 
-<footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div><div class="footer-brand"><img data-header-logo src="assets/image%20(2).png" alt="MCC"><strong>MCC — GER Nordeste 2</strong></div><p>Portal institucional do Grupo Executivo Regional Nordeste 2.</p><p>Alagoas • Paraíba • Pernambuco • Rio Grande do Norte</p></div>
-      <div><h4>Navegação</h4><ul><li><a href="ger.html">GER NE2</a></li><li><a href="geds.html">GEDs</a></li><li><a href="noticias.html">Notícias</a></li><li><a href="agenda.html">Agenda</a></li><li><a href="publicar.html">Publique seu evento</a></li></ul></div>
-      <div><h4>Conteúdo e acesso</h4><ul><li><a href="formacao.html">Formação</a></li><li><a href="documentos.html">Documentos</a></li><li><a href="galeria.html">Galeria</a></li><li><a href="contato.html">Contato</a></li><li><a href="admin.html">Área administrativa</a></li></ul></div>
-    </div>
-    <div class="bottom"><span>© MCC GER Nordeste 2</span><span>mcc-ger-nordeste-2.pages.dev</span></div>
-  </div>
-</footer>
+        <div data-event-list>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/supabase-config.js"></script>
-<script src="assets/app.js"></script>
+          <div class="event">
+
+            <div class="datebox">
+
+              <small>
+                —
+              </small>
+
+              <strong>
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <h4>
+                Nenhum evento cadastrado
+              </h4>
+
+              <p>
+                A agenda será atualizada pelo painel administrativo.
+              </p>
+
+            </div>
+
+
+            <span>
+              →
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       ESTADOS
+       ========================================================= -->
+
+  <section class="section home-region-section">
+
+    <div class="container">
+
+
+      <div class="section-head light-head">
+
+        <div>
+
+          <div class="section-label">
+            Presença regional
+          </div>
+
+          <h2>
+            Quatro estados, uma caminhada
+          </h2>
+
+          <p>
+            Clique em um estado para conhecer seus GEDs e
+            coordenações.
+          </p>
+
+        </div>
+
+
+        <a
+          class="section-link light-link"
+          href="geds.html"
+        >
+          Ver todos os GEDs →
+        </a>
+
+      </div>
+
+
+
+      <div class="home-state-grid">
+
+
+        <a
+          class="home-state-card"
+          href="geds.html?state=Alagoas"
+        >
+
+          <span>
+            AL
+          </span>
+
+          <strong>
+            Alagoas
+          </strong>
+
+          <small>
+            Maceió • Palmeira dos Índios • Penedo
+          </small>
+
+        </a>
+
+
+
+        <a
+          class="home-state-card"
+          href="geds.html?state=Paraíba"
+        >
+
+          <span>
+            PB
+          </span>
+
+          <strong>
+            Paraíba
+          </strong>
+
+          <small>
+            Patos • Campina Grande
+          </small>
+
+        </a>
+
+
+
+        <a
+          class="home-state-card"
+          href="geds.html?state=Pernambuco"
+        >
+
+          <span>
+            PE
+          </span>
+
+          <strong>
+            Pernambuco
+          </strong>
+
+          <small>
+            Garanhuns
+          </small>
+
+        </a>
+
+
+
+        <a
+          class="home-state-card"
+          href="geds.html?state=Rio%20Grande%20do%20Norte"
+        >
+
+          <span>
+            RN
+          </span>
+
+          <strong>
+            Rio Grande do Norte
+          </strong>
+
+          <small>
+            Mossoró
+          </small>
+
+        </a>
+
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       ENVIO DE EVENTOS
+       ========================================================= -->
+
+  <section class="section">
+
+    <div class="container">
+
+
+      <div class="publish-cta home-publish-cta">
+
+
+        <div>
+
+          <div class="eyebrow">
+            Comunicação dos GEDs
+          </div>
+
+          <h2>
+            Seu GED realizou um encontro?
+          </h2>
+
+          <p>
+
+            Envie as informações e as fotos. O material entra
+            na fila editorial, passa por revisão da equipe e
+            só depois é publicado no portal oficial.
+
+          </p>
+
+
+          <div class="publish-steps">
+
+            <span>
+              1. Envie
+            </span>
+
+            <span>
+              2. Revisamos
+            </span>
+
+            <span>
+              3. Publicamos
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+        <a
+          class="btn primary"
+          href="publicar.html"
+        >
+          Publique aqui o evento do seu GED →
+        </a>
+
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       FORMAÇÃO
+       ========================================================= -->
+
+  <section class="section alt">
+
+    <div class="container">
+
+
+      <div class="section-head">
+
+        <div>
+
+          <div class="section-label">
+            Formação e espiritualidade
+          </div>
+
+          <h2>
+            Conteúdos para a caminhada
+          </h2>
+
+          <p>
+            Subsídios e reflexões para dirigentes,
+            equipes e cursilhistas.
+          </p>
+
+        </div>
+
+
+        <a
+          class="section-link"
+          href="formacao.html"
+        >
+          Ver formação →
+        </a>
+
+      </div>
+
+
+
+      <div
+        class="grid-3"
+        data-home-formation
+      >
+
+        <article class="card">
+
+          <div class="card-body">
+
+            <span class="tag">
+              Formação
+            </span>
+
+            <h3>
+              Novos conteúdos aparecerão aqui
+            </h3>
+
+            <p>
+              Publique materiais da categoria Formação
+              pelo painel administrativo.
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       GALERIA
+       ========================================================= -->
+
+  <section class="section">
+
+    <div class="container">
+
+
+      <div class="section-head">
+
+        <div>
+
+          <div class="section-label">
+            Memória regional
+          </div>
+
+          <h2>
+            Galeria recente
+          </h2>
+
+          <p>
+            Registros dos encontros e atividades
+            publicados pelos GEDs.
+          </p>
+
+        </div>
+
+
+        <a
+          class="section-link"
+          href="galeria.html"
+        >
+          Abrir galeria →
+        </a>
+
+      </div>
+
+
+
+      <div
+        class="home-gallery"
+        data-home-gallery
+      >
+
+        <div class="home-gallery-empty">
+
+          As fotos das publicações aprovadas
+          aparecerão aqui.
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       IDENTIDADE REGIONAL
+       ========================================================= -->
+
+  <section class="section home-identity">
+
+    <div class="container region-grid">
+
+
+      <div class="region-copy">
+
+        <div class="section-label">
+          Identidade regional
+        </div>
+
+        <h2>
+          GER Nordeste 2
+        </h2>
+
+        <p>
+
+          O portal reúne a caminhada regional em um só lugar:
+          coordenação, GEDs, agenda, notícias, formação,
+          documentos e a memória de nossa missão.
+
+        </p>
+
+
+        <a
+          class="btn blue"
+          href="ger.html"
+        >
+          Conheça nossa estrutura →
+        </a>
+
+      </div>
+
+
+
+      <div class="region-logo-wrap">
+
+        <img
+          data-main-logo
+          src="assets/logo%20(3).png"
+          alt="Logo GER Nordeste 2"
+        >
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================================================
+       RODAPÉ
+       ========================================================= -->
+
+  <footer>
+
+    <div class="container">
+
+
+      <div class="footer-grid">
+
+
+        <div>
+
+
+          <div class="footer-brand">
+
+            <img
+              data-header-logo
+              src="assets/image%20(2).png"
+              alt="MCC"
+            >
+
+            <strong>
+              MCC — GER Nordeste 2
+            </strong>
+
+          </div>
+
+
+          <p>
+            Portal institucional do Grupo Executivo
+            Regional Nordeste 2.
+          </p>
+
+
+          <p>
+            Alagoas • Paraíba • Pernambuco •
+            Rio Grande do Norte
+          </p>
+
+
+        </div>
+
+
+
+        <div>
+
+          <h4>
+            Navegação
+          </h4>
+
+          <ul>
+
+            <li>
+              <a href="ger.html">
+                GER NE2
+              </a>
+            </li>
+
+            <li>
+              <a href="geds.html">
+                GEDs
+              </a>
+            </li>
+
+            <li>
+              <a href="noticias.html">
+                Notícias
+              </a>
+            </li>
+
+            <li>
+              <a href="agenda.html">
+                Agenda
+              </a>
+            </li>
+
+            <li>
+              <a href="publicar.html">
+                Publique seu evento
+              </a>
+            </li>
+
+          </ul>
+
+        </div>
+
+
+
+        <div>
+
+          <h4>
+            Conteúdo e acesso
+          </h4>
+
+          <ul>
+
+            <li>
+              <a href="formacao.html">
+                Formação
+              </a>
+            </li>
+
+            <li>
+              <a href="documentos.html">
+                Documentos
+              </a>
+            </li>
+
+            <li>
+              <a href="galeria.html">
+                Galeria
+              </a>
+            </li>
+
+            <li>
+              <a href="contato.html">
+                Contato
+              </a>
+            </li>
+
+            <li>
+              <a href="admin.html">
+                Área administrativa
+              </a>
+            </li>
+
+          </ul>
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="bottom">
+
+        <span>
+          © MCC GER Nordeste 2
+        </span>
+
+        <span>
+          mcc-ger-nordeste-2.pages.dev
+        </span>
+
+      </div>
+
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- =========================================================
+       SUPABASE + JAVASCRIPT
+       ========================================================= -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+  <script src="assets/supabase-config.js"></script>
+
+  <script src="assets/app.js"></script>
+
+
 </body>
 </html>
