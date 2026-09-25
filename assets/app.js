@@ -1,6 +1,6 @@
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function fmtDate(v){if(!v)return'';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('pt-BR')}
-function postCard(n){return '<article class="card">'+(n.cover_url?'<img src="'+esc(n.cover_url)+'" alt="" style="width:100%;height:190px;object-fit:cover">':'<div class="placeholder">✦</div>')+'<div class="card-body"><span class="tag">'+esc(n.geds?.name||n.category||'GER NE2')+'</span><h3>'+esc(n.title)+'</h3><p>'+esc(n.summary||'')+'</p>'+(n.event_date?'<small>'+fmtDate(n.event_date)+'</small>':'')+'</div></article>'}
+function postCard(n){return '<article class="card">'+(n.cover_url?'<a href="post.html?id='+encodeURIComponent(n.id)+'"><img src="'+esc(n.cover_url)+'" alt="" style="width:100%;height:190px;object-fit:cover"></a>':'<div class="placeholder">✦</div>')+'<div class="card-body"><span class="tag">'+esc(n.geds?.name||n.category||'GER NE2')+'</span><h3><a href="post.html?id='+encodeURIComponent(n.id)+'">'+esc(n.title)+'</a></h3><p>'+esc(n.summary||'')+'</p>'+(n.event_date?'<small>'+fmtDate(n.event_date)+'</small>':'')+'</div></article>'}
 document.addEventListener('DOMContentLoaded',async()=>{
  const b=document.querySelector('.menu-btn'),m=document.querySelector('.mobile-nav');if(b&&m)b.addEventListener('click',()=>m.classList.toggle('open'));
  const sb=window.mccSupabase;if(!sb)return;
