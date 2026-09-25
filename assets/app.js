@@ -2,6 +2,9 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function fmtDate(v){if(!v)return'';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('pt-BR')}
 function postCard(n){return '<article class="card">'+(n.cover_url?'<a href="post.html?id='+encodeURIComponent(n.id)+'"><img src="'+esc(n.cover_url)+'" alt="" style="width:100%;height:190px;object-fit:cover"></a>':'<div class="placeholder">✦</div>')+'<div class="card-body"><span class="tag">'+esc(n.geds?.name||n.category||'GER NE2')+'</span><h3><a href="post.html?id='+encodeURIComponent(n.id)+'">'+esc(n.title)+'</a></h3><p>'+esc(n.summary||'')+'</p>'+(n.event_date?'<small>'+fmtDate(n.event_date)+'</small>':'')+'</div></article>'}
 document.addEventListener('DOMContentLoaded',async()=>{
+ document.querySelectorAll('.section,.quick,.home-stat,.home-state-card').forEach(el=>el.classList.add('reveal'));
+ if('IntersectionObserver' in window){const io=new IntersectionObserver(entries=>entries.forEach(x=>{if(x.isIntersecting){x.target.classList.add('is-visible');io.unobserve(x.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>io.observe(el))}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('is-visible'))}
+
  const b=document.querySelector('.menu-btn'),m=document.querySelector('.mobile-nav');if(b&&m)b.addEventListener('click',()=>m.classList.toggle('open'));
  const sb=window.mccSupabase;if(!sb)return;
  const statsG=document.querySelector('[data-stat-geds]'),statsP=document.querySelector('[data-stat-posts]'),statsE=document.querySelector('[data-stat-events]');
