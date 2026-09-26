@@ -22,7 +22,7 @@ function showAdmin(){
 async function ensureAdmin(session){
  if(!session)return false;
  let {data:profile}=await sb.from('profiles').select('id,role,full_name').eq('id',session.user.id).maybeSingle();
- if(profile&&['admin','editor'].includes(profile.role))return true;
+ if(profile&&['administrador','coordenador_vice','colaborador_cursilhista'].includes(profile.role))return true;
  const {data:available}=await sb.rpc('admin_setup_available');
  if(available){
   const name=session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'Administrador';
