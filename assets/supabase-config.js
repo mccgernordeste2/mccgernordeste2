@@ -39,3 +39,79 @@ window.addEventListener('DOMContentLoaded',()=>{
   credit.innerHTML='Desenvolvido por <strong>Diogo Eduardo da Luz Ferreira</strong> • UX/UI Designer &amp; Desenvolvedor Web - <a href="https://www.instagram.com/luzvanteestudio?stkn=MTdxNnVmY29lNmxxcA==" target="_blank" rel="noopener noreferrer"><strong>Luzvante Estúdio</strong></a>';
   document.body.appendChild(credit);
 });
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  try{
+    const {data:{session}}=await window.mccSupabase.auth.getSession();
+    if(!session)return;
+
+    const {data:profile,error}=await window.mccSupabase
+      .from('profiles')
+      .select('full_name,role,photo_url')
+      .eq('id',session.user.id)
+      .maybeSingle();
+
+    if(error||!profile)return;
+
+    const labels={
+      administrador:'Administrador',
+      coordenador_vice:'Coordenador ou Vice',
+      colaborador_cursilhista:'Colaborador Cursilhista'
+    };
+
+    const fullName=(profile.full_name||session.user.user_metadata?.full_name||session.user.email||'Usuário').trim();
+    const roleLabel=labels[profile.role]||'Equipe do portal';
+
+    const badge=document.createElement('div');
+    badge.className='portal-login-status';
+    badge.setAttribute('aria-label','Usuário autenticado no portal');
+
+    const initials=fullName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0,2)
+      .map(x=>x.charAt(0).toUpperCase())
+      .join('');
+
+    const avatar=document.createElement('div');
+    avatar.className='portal-login-avatar';
+
+    if(profile.photo_url){
+      const img=document.createElement('img');
+      img.src=profile.photo_url;
+      img.alt='Foto de '+fullName;
+      avatar.appendChild(img);
+    }else{
+      avatar.textContent=initials||'U';
+    }
+
+    const textWrap=document.createElement('div');
+    textWrap.className='portal-login-text';
+
+    const label=document.createElement('small');
+    label.textContent='Logado como';
+
+    const name=document.createElement('strong');
+    name.textContent=fullName;
+
+    const role=document.createElement('span');
+    role.textContent=roleLabel;
+
+    textWrap.append(label,name,role);
+    badge.append(avatar,textWrap);
+
+    const headerInner=document.querySelector('.site-header .header-inner');
+    const siteHeader=document.querySelector('.site-header');
+
+    if(headerInner){
+      headerInner.appendChild(badge);
+    }else if(siteHeader){
+      siteHeader.appendChild(badge);
+    }else{
+      badge.classList.add('portal-login-floating');
+      document.body.appendChild(badge);
+    }
+  }catch(err){
+    console.debug('Identificação de usuário indisponível',err);
+  }
+});
