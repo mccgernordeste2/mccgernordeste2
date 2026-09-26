@@ -64,7 +64,11 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
     const badge=document.createElement('div');
     badge.className='portal-login-status portal-login-nav';
-    badge.setAttribute('aria-label','Usuário autenticado no portal');
+    badge.setAttribute('aria-label','Abrir painel administrativo');
+    badge.setAttribute('role','button');
+    badge.setAttribute('tabindex','0');
+    badge.addEventListener('click',()=>location.href='admin.html');
+    badge.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();location.href='admin.html'}});
 
     const initials=fullName
       .split(/\s+/)
