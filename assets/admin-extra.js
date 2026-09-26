@@ -106,6 +106,52 @@ document.addEventListener('DOMContentLoaded',()=>{
     decorate();
   }
 
+  async function loadAnalytics(){
+    const dash=document.getElementById('section-dashboard');
+    if(!dash||dash.querySelector('.analytics-panel')) return;
+
+    const panel=document.createElement('div');
+    panel.className='admin-panel analytics-panel';
+    panel.innerHTML=
+      '<div class="analytics-head"><div><div class="section-label">Audiência</div><h2>Visualizações do portal</h2><p>Contagem anônima a partir da ativação deste recurso.</p></div><button type="button" class="btn secondary" id="refresh-analytics">Atualizar</button></div>'+
+      '<div class="analytics-stats">'+
+        '<div class="analytics-stat"><span>Visualizações totais</span><strong id="analytics-total">—</strong></div>'+
+        '<div class="analytics-stat"><span>Visitantes únicos</span><strong id="analytics-unique">—</strong></div>'+
+        '<div class="analytics-stat"><span>Visualizações hoje</span><strong id="analytics-today">—</strong></div>'+
+        '<div class="analytics-stat"><span>Visitantes hoje</span><strong id="analytics-visitors-today">—</strong></div>'+
+      '</div>'+
+      '<div class="analytics-pages"><h3>Páginas mais acessadas</h3><div id="analytics-pages-list"><p>Carregando...</p></div></div>';
+
+    dash.appendChild(panel);
+
+    async function refresh(){
+      const list=document.getElementById('analytics-pages-list');
+      const {data,error}=await sb.rpc('get_site_analytics');
+      if(error||!data||data.error){
+        list.innerHTML='<p>Não foi possível carregar as estatísticas agora.</p>';
+        return;
+      }
+
+      document.getElementById('analytics-total').textContent=Number(data.total_views||0).toLocaleString('pt-BR');
+      document.getElementById('analytics-unique').textContent=Number(data.unique_visitors||0).toLocaleString('pt-BR');
+      document.getElementById('analytics-today').textContent=Number(data.views_today||0).toLocaleString('pt-BR');
+      document.getElementById('analytics-visitors-today').textContent=Number(data.visitors_today||0).toLocaleString('pt-BR');
+
+      const pages=Array.isArray(data.top_pages)?data.top_pages:[];
+      list.innerHTML=pages.length
+        ? pages.map((p,i)=>'<div class="analytics-page-row"><span><b>'+(i+1)+'.</b> '+escapeAnalytics(p.path)+'</span><strong>'+Number(p.views||0).toLocaleString('pt-BR')+'</strong></div>').join('')
+        : '<p>Ainda não há visualizações registradas.</p>';
+    }
+
+    function escapeAnalytics(value){
+      return String(value||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    document.getElementById('refresh-analytics')?.addEventListener('click',refresh);
+    await refresh();
+  }
+
   addBackButtons();
   ensureGedEditor();
+  loadAnalytics();
 });
