@@ -214,3 +214,190 @@
 .portal-login-logout{
   margin-top:1px!important;
 }
+
+
+/* TRANSIÇÃO DE PÁGINAS DO PORTAL */
+html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
+.mcc-page-transition{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 46%,rgba(47,173,255,.45) 0,rgba(21,111,211,.32) 22%,rgba(4,43,99,.82) 58%,#031a3c 100%),
+    linear-gradient(135deg,#052b63 0%,#0a5fbf 48%,#063a82 100%);
+  transition:opacity .22s ease,visibility .22s ease;
+}
+.mcc-page-transition.is-active{
+  opacity:1;
+  visibility:visible;
+  pointer-events:all;
+}
+.mcc-page-transition:before,
+.mcc-page-transition:after{
+  content:"";
+  position:absolute;
+  width:150%;
+  height:46%;
+  left:-25%;
+  border-radius:50%;
+  filter:blur(2px);
+  opacity:.52;
+}
+.mcc-page-transition:before{
+  bottom:-10%;
+  background:
+    radial-gradient(ellipse at center,rgba(255,255,255,.32) 0,rgba(63,181,255,.18) 33%,rgba(255,255,255,0) 68%);
+  transform:rotate(-5deg);
+  animation:mccWaveOne 3.2s ease-in-out infinite alternate;
+}
+.mcc-page-transition:after{
+  bottom:5%;
+  background:
+    radial-gradient(ellipse at center,rgba(255,172,77,.18) 0,rgba(111,214,255,.24) 35%,rgba(255,255,255,0) 69%);
+  transform:rotate(5deg);
+  animation:mccWaveTwo 3.8s ease-in-out infinite alternate;
+}
+.mcc-transition-light{
+  position:absolute;
+  width:62vw;
+  height:62vw;
+  border-radius:50%;
+  border:2px solid rgba(146,219,255,.18);
+  box-shadow:
+    0 0 70px rgba(49,174,255,.28),
+    inset 0 0 80px rgba(255,255,255,.08);
+}
+.mcc-transition-light-one{
+  top:-35vw;
+  left:-14vw;
+  animation:mccOrbit 7s linear infinite;
+}
+.mcc-transition-light-two{
+  right:-22vw;
+  bottom:-38vw;
+  animation:mccOrbit 9s linear infinite reverse;
+}
+.mcc-transition-particles{
+  position:absolute;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 15% 20%,rgba(255,255,255,.75) 0 1px,transparent 2px),
+    radial-gradient(circle at 80% 25%,rgba(146,223,255,.65) 0 1.5px,transparent 2.5px),
+    radial-gradient(circle at 35% 70%,rgba(255,255,255,.48) 0 1px,transparent 2px),
+    radial-gradient(circle at 70% 72%,rgba(255,196,111,.48) 0 1px,transparent 2px),
+    radial-gradient(circle at 55% 35%,rgba(255,255,255,.38) 0 1px,transparent 2px);
+  background-size:170px 170px,220px 220px,200px 200px,250px 250px,190px 190px;
+  animation:mccParticles 8s linear infinite;
+  opacity:.8;
+}
+.mcc-transition-center{
+  position:relative;
+  z-index:4;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  width:min(430px,76vw);
+  aspect-ratio:1/1;
+}
+.mcc-transition-halo{
+  position:absolute;
+  width:80%;
+  height:80%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle,rgba(255,255,255,.27) 0,rgba(78,196,255,.20) 34%,rgba(20,111,220,.08) 57%,transparent 72%);
+  box-shadow:
+    0 0 75px rgba(79,198,255,.48),
+    0 0 140px rgba(47,132,255,.24);
+  animation:mccHalo 1.8s ease-in-out infinite alternate;
+}
+.mcc-transition-logo{
+  position:relative;
+  z-index:2;
+  width:min(265px,50vw)!important;
+  height:auto!important;
+  max-height:50vh!important;
+  object-fit:contain!important;
+  filter:
+    drop-shadow(0 18px 28px rgba(0,0,0,.25))
+    drop-shadow(0 0 18px rgba(144,220,255,.28));
+  opacity:0;
+  transform:scale(.82) translateY(12px);
+}
+.mcc-page-transition.is-active .mcc-transition-logo{
+  animation:mccLogoEnter .68s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.mcc-transition-dots{
+  position:absolute;
+  bottom:7%;
+  display:flex;
+  gap:7px;
+  z-index:3;
+}
+.mcc-transition-dots i{
+  display:block;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 12px rgba(255,255,255,.7);
+  animation:mccDot 1s ease-in-out infinite;
+}
+.mcc-transition-dots i:nth-child(2){animation-delay:.15s}
+.mcc-transition-dots i:nth-child(3){animation-delay:.3s}
+@keyframes mccLogoEnter{
+  0%{opacity:0;transform:scale(.80) translateY(14px)}
+  65%{opacity:1;transform:scale(1.045) translateY(0)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+@keyframes mccHalo{
+  from{transform:scale(.96);opacity:.72}
+  to{transform:scale(1.05);opacity:1}
+}
+@keyframes mccWaveOne{
+  from{transform:translateX(-3%) rotate(-5deg) scale(1)}
+  to{transform:translateX(3%) rotate(-2deg) scale(1.05)}
+}
+@keyframes mccWaveTwo{
+  from{transform:translateX(4%) rotate(5deg) scale(1)}
+  to{transform:translateX(-4%) rotate(2deg) scale(1.08)}
+}
+@keyframes mccOrbit{to{transform:rotate(360deg)}}
+@keyframes mccParticles{
+  from{transform:translateY(0)}
+  to{transform:translateY(-28px)}
+}
+@keyframes mccDot{
+  0%,100%{opacity:.28;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.18)}
+}
+@media(max-width:720px){
+  .mcc-transition-center{width:82vw}
+  .mcc-transition-logo{width:min(220px,58vw)!important}
+  .mcc-transition-light{width:95vw;height:95vw}
+  .mcc-transition-light-one{top:-42vw;left:-42vw}
+  .mcc-transition-light-two{right:-47vw;bottom:-42vw}
+}
+@media(prefers-reduced-motion:reduce){
+  .mcc-page-transition:before,
+  .mcc-page-transition:after,
+  .mcc-transition-light,
+  .mcc-transition-particles,
+  .mcc-transition-halo,
+  .mcc-transition-logo,
+  .mcc-transition-dots i{
+    animation:none!important;
+  }
+  .mcc-page-transition.is-active .mcc-transition-logo{
+    opacity:1;
+    transform:none;
+  }
+}
