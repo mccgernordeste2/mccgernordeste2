@@ -63,7 +63,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
     const roleLabel=labels[profile.role]||'Equipe do portal';
 
     const badge=document.createElement('div');
-    badge.className='portal-login-status';
+    badge.className='portal-login-status portal-login-nav';
     badge.setAttribute('aria-label','Usuário autenticado no portal');
 
     const initials=fullName
@@ -88,25 +88,24 @@ window.addEventListener('DOMContentLoaded',async()=>{
     const textWrap=document.createElement('div');
     textWrap.className='portal-login-text';
 
-    const label=document.createElement('small');
-    label.textContent='Logado como';
-
     const name=document.createElement('strong');
     name.textContent=fullName;
 
     const role=document.createElement('span');
     role.textContent=roleLabel;
 
-    textWrap.append(label,name,role);
+    textWrap.append(name,role);
     badge.append(avatar,textWrap);
 
-    const headerInner=document.querySelector('.site-header .header-inner');
-    const siteHeader=document.querySelector('.site-header');
+    const desktopAdmin=document.querySelector('.desktop-nav .admin-link');
+    const mobileAdmin=document.querySelector('.mobile-nav .admin-link');
+    const desktopNav=document.querySelector('.desktop-nav');
 
-    if(headerInner){
-      headerInner.appendChild(badge);
-    }else if(siteHeader){
-      siteHeader.appendChild(badge);
+    if(desktopAdmin)desktopAdmin.classList.add('hidden');
+    if(mobileAdmin)mobileAdmin.classList.add('hidden');
+
+    if(desktopNav){
+      desktopNav.appendChild(badge);
     }else{
       badge.classList.add('portal-login-floating');
       document.body.appendChild(badge);
