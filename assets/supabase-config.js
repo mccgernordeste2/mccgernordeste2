@@ -98,7 +98,21 @@ window.addEventListener('DOMContentLoaded',async()=>{
     const role=document.createElement('span');
     role.textContent=roleLabel;
 
-    textWrap.append(name,role);
+    const logout=document.createElement('button');
+    logout.type='button';
+    logout.className='portal-login-logout';
+    logout.textContent='Sair';
+    logout.addEventListener('click',async e=>{
+      e.stopPropagation();
+      await window.mccSupabase.auth.signOut();
+      location.href='index.html';
+    });
+
+    const meta=document.createElement('div');
+    meta.className='portal-login-meta';
+    meta.append(role,logout);
+
+    textWrap.append(name,meta);
     badge.append(avatar,textWrap);
 
     const desktopAdmin=document.querySelector('.desktop-nav .admin-link');
