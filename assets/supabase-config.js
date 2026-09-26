@@ -132,3 +132,92 @@ window.addEventListener('DOMContentLoaded',async()=>{
     console.debug('Identificação de usuário indisponível',err);
   }
 });
+
+
+/* Transição visual entre páginas internas do portal */
+window.addEventListener('DOMContentLoaded',async()=>{
+  const currentPath=location.pathname||'';
+  if(currentPath.endsWith('configurar-admin.html')) return;
+  if(document.getElementById('mcc-page-transition')) return;
+
+  const overlay=document.createElement('div');
+  overlay.id='mcc-page-transition';
+  overlay.className='mcc-page-transition';
+  overlay.setAttribute('aria-hidden','true');
+  overlay.innerHTML=
+    '<div class="mcc-transition-light mcc-transition-light-one"></div>'+
+    '<div class="mcc-transition-light mcc-transition-light-two"></div>'+
+    '<div class="mcc-transition-particles"></div>'+
+    '<div class="mcc-transition-center">'+
+      '<div class="mcc-transition-halo"></div>'+
+      '<img class="mcc-transition-logo" src="assets/logo%20(3).png" alt="GER Nordeste 2">'+
+      '<div class="mcc-transition-dots"><i></i><i></i><i></i></div>'+
+    '</div>';
+
+  document.body.appendChild(overlay);
+
+  try{
+    const {data:settings}=await window.mccSupabase
+      .from('site_settings')
+      .select('main_logo_url')
+      .eq('id',1)
+      .maybeSingle();
+
+    if(settings?.main_logo_url){
+      const img=overlay.querySelector('.mcc-transition-logo');
+      if(img)img.src=settings.main_logo_url;
+    }
+  }catch(err){
+    console.debug('Logo da transição usando imagem padrão',err);
+  }
+
+  let navigating=false;
+
+  function shouldAnimateLink(anchor,event){
+    if(!anchor||navigating)return false;
+    if(event.defaultPrevented)return false;
+    if(event.button!==0)return false;
+    if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return false;
+    if(anchor.target&&anchor.target.toLowerCase()==='_blank')return false;
+    if(anchor.hasAttribute('download'))return false;
+
+    const raw=(anchor.getAttribute('href')||'').trim();
+    if(!raw||raw==='#'||raw.startsWith('#'))return false;
+    if(/^(mailto:|tel:|javascript:)/i.test(raw))return false;
+
+    let url;
+    try{url=new URL(anchor.href,location.href)}catch{return false}
+    if(url.origin!==location.origin)return false;
+
+    const lower=url.pathname.toLowerCase();
+    if(/\.(pdf|png|jpe?g|webp|svg|zip|docx?|xlsx?|pptx?)$/i.test(lower))return false;
+
+    if(url.pathname===location.pathname && url.search===location.search && url.hash)return false;
+
+    return true;
+  }
+
+  document.addEventListener('click',event=>{
+    const anchor=event.target.closest('a[href]');
+    if(!shouldAnimateLink(anchor,event))return;
+
+    event.preventDefault();
+    navigating=true;
+
+    const destination=anchor.href;
+    overlay.classList.add('is-active');
+    overlay.setAttribute('aria-hidden','false');
+    document.documentElement.classList.add('mcc-transition-lock');
+
+    window.setTimeout(()=>{
+      location.href=destination;
+    },820);
+  },true);
+
+  window.addEventListener('pageshow',()=>{
+    navigating=false;
+    overlay.classList.remove('is-active');
+    overlay.setAttribute('aria-hidden','true');
+    document.documentElement.classList.remove('mcc-transition-lock');
+  });
+});
