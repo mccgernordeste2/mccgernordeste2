@@ -36,6 +36,6 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   const credit=document.createElement('div');
   credit.className='site-developer-credit';
-  credit.innerHTML='Desenvolvido por <strong>Diogo Eduardo da Luz Ferreira</strong> • UX/UI Designer &amp; Desenvolvedor Web - <strong>Luzvante Estúdio</strong>';
+  credit.innerHTML='Desenvolvido por <strong>Diogo Eduardo da Luz Ferreira</strong> • UX/UI Designer &amp; Desenvolvedor Web - <a href="https://www.instagram.com/luzvanteestudio?stkn=MTdxNnVmY29lNmxxcA==" target="_blank" rel="noopener noreferrer"><strong>Luzvante Estúdio</strong></a>';
   document.body.appendChild(credit);
 });
