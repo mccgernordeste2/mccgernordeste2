@@ -402,15 +402,51 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   }
 }
 /* ==========================================================
-   MAPA INTERATIVO REAL - GER NORDESTE 2
+   MAPA INTERATIVO PREMIUM - GER NORDESTE 2
    ========================================================== */
 
 .ne2-map-image-wrapper {
   position: relative;
   width: 100%;
   max-width: 650px;
-  margin: 0 auto;
+  margin: 14px auto 6px;
   overflow: visible;
+  isolation: isolate;
+  border-radius: 28px;
+}
+
+/* brilho azul suave ao redor do mapa inteiro */
+.ne2-map-image-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 5% 3%;
+  z-index: -2;
+  border-radius: 32%;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(20,117,212,.28) 0%,
+      rgba(65,165,255,.17) 36%,
+      rgba(20,117,212,.08) 57%,
+      transparent 76%
+    );
+  filter: blur(24px);
+  opacity: .9;
+  transform: scale(1.02);
+  animation: ne2MapGlow 4.2s ease-in-out infinite alternate;
+}
+
+/* halo externo discreto */
+.ne2-map-image-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 9% 5%;
+  z-index: -1;
+  border-radius: 30%;
+  box-shadow:
+    0 0 28px rgba(20,117,212,.18),
+    0 0 58px rgba(20,117,212,.10);
+  pointer-events: none;
 }
 
 .ne2-map-image {
@@ -420,8 +456,27 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   object-fit: contain;
   user-select: none;
   pointer-events: none;
-  filter: drop-shadow(0 12px 18px rgba(11, 45, 89, .12));
+  position: relative;
+  z-index: 1;
+  transform: translateZ(0);
+  filter:
+    drop-shadow(0 12px 18px rgba(11,45,89,.12))
+    drop-shadow(0 0 14px rgba(20,117,212,.08));
+  transition:
+    filter .35s ease,
+    transform .35s cubic-bezier(.2,.8,.2,1);
 }
+
+/* leve resposta visual do mapa inteiro */
+.ne2-map-image-wrapper:hover .ne2-map-image {
+  filter:
+    drop-shadow(0 14px 22px rgba(11,45,89,.15))
+    drop-shadow(0 0 18px rgba(20,117,212,.13));
+}
+
+/* ==========================================================
+   ÁREAS CLICÁVEIS
+   ========================================================== */
 
 .ne2-map-image-wrapper .map-state {
   position: absolute;
@@ -429,20 +484,72 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   padding: 0;
   cursor: pointer;
   background: transparent;
-  transition: transform .22s ease, filter .22s ease;
   z-index: 3;
+  outline: none;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    transform .24s cubic-bezier(.2,.8,.2,1),
+    filter .24s ease,
+    opacity .24s ease;
+}
+
+/* camada de cor do hover */
+.ne2-map-image-wrapper .map-state::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--state-hover);
+  transition:
+    opacity .24s ease,
+    transform .24s cubic-bezier(.2,.8,.2,1),
+    box-shadow .24s ease;
+}
+
+/* camada de brilho premium */
+.ne2-map-image-wrapper .map-state::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.28),
+      rgba(255,255,255,.04) 48%,
+      rgba(255,255,255,.18)
+    );
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.38),
+    0 8px 22px rgba(10,44,84,.16);
+  transition:
+    opacity .24s ease,
+    transform .24s cubic-bezier(.2,.8,.2,1),
+    box-shadow .24s ease;
 }
 
 .ne2-map-image-wrapper .map-state span {
   display: none;
 }
 
-/* RN */
+/* ==========================================================
+   CORES ESPECÍFICAS DOS ESTADOS
+   ========================================================== */
+
+/* RN - azul */
 .map-state-rn {
+  --state-hover: rgba(24,126,235,.22);
+  --state-glow: rgba(24,126,235,.52);
+
   left: 43%;
   top: 0%;
   width: 57%;
   height: 38%;
+
   clip-path: polygon(
     22% 0%,
     54% 4%,
@@ -460,12 +567,16 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   );
 }
 
-/* PB */
+/* PB - verde */
 .map-state-pb {
+  --state-hover: rgba(117,205,67,.23);
+  --state-glow: rgba(117,205,67,.52);
+
   left: 38%;
   top: 23%;
   width: 62%;
   height: 39%;
+
   clip-path: polygon(
     8% 5%,
     34% 2%,
@@ -484,12 +595,16 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   );
 }
 
-/* PE */
+/* PE - amarelo */
 .map-state-pe {
+  --state-hover: rgba(255,215,0,.23);
+  --state-glow: rgba(244,191,0,.54);
+
   left: 0%;
   top: 42%;
   width: 96%;
   height: 38%;
+
   clip-path: polygon(
     0% 46%,
     11% 23%,
@@ -514,12 +629,16 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   );
 }
 
-/* AL */
+/* AL - rosa */
 .map-state-al {
+  --state-hover: rgba(239,95,159,.22);
+  --state-glow: rgba(239,95,159,.52);
+
   left: 46%;
   top: 68%;
   width: 51%;
   height: 32%;
+
   clip-path: polygon(
     5% 0%,
     20% 20%,
@@ -539,35 +658,104 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   );
 }
 
+/* ==========================================================
+   HOVER PREMIUM
+   ========================================================== */
+
 .ne2-map-image-wrapper .map-state:hover,
 .ne2-map-image-wrapper .map-state:focus-visible {
-  transform: scale(1.025);
-  filter: drop-shadow(0 7px 9px rgba(0, 0, 0, .28));
-  outline: none;
+  transform: translateY(-2px) scale(1.018);
+  filter:
+    drop-shadow(0 7px 10px rgba(0,0,0,.14))
+    drop-shadow(0 0 9px var(--state-glow));
 }
 
-.ne2-map-image-wrapper .map-state.active {
-  filter:
-    drop-shadow(0 0 9px rgba(20, 117, 212, .75))
-    drop-shadow(0 9px 10px rgba(0, 0, 0, .18));
-  transform: scale(1.018);
+.ne2-map-image-wrapper .map-state:hover::before,
+.ne2-map-image-wrapper .map-state:focus-visible::before {
+  opacity: 1;
+  transform: scale(1.006);
 }
+
+.ne2-map-image-wrapper .map-state:hover::after,
+.ne2-map-image-wrapper .map-state:focus-visible::after {
+  opacity: .72;
+  transform: scale(1.006);
+}
+
+/* ==========================================================
+   CLIQUE
+   ========================================================== */
+
+.ne2-map-image-wrapper .map-state:active {
+  transform: scale(.985);
+  transition-duration: .09s;
+}
+
+.ne2-map-image-wrapper .map-state:active::before {
+  opacity: 1;
+}
+
+.ne2-map-image-wrapper .map-state:active::after {
+  opacity: .92;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.52),
+    0 3px 8px rgba(10,44,84,.12);
+}
+
+/* ==========================================================
+   ESTADO SELECIONADO
+   ========================================================== */
+
+.ne2-map-image-wrapper .map-state.active {
+  transform: scale(1.012);
+  filter:
+    drop-shadow(0 0 8px var(--state-glow))
+    drop-shadow(0 8px 13px rgba(10,44,84,.15));
+}
+
+.ne2-map-image-wrapper .map-state.active::before {
+  opacity: .62;
+}
+
+.ne2-map-image-wrapper .map-state.active::after {
+  opacity: .48;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.36),
+    0 0 0 5px rgba(20,117,212,.06);
+}
+
+/* ==========================================================
+   CARTÃO DO MAPA
+   ========================================================== */
 
 .ged-map-card {
   position: relative;
   overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(20,117,212,.07),
+      transparent 30%
+    ),
+    #fff;
 }
 
 .ged-map-card::before {
   content: "";
   position: absolute;
-  width: 260px;
-  height: 260px;
-  right: -130px;
-  top: -130px;
+  width: 310px;
+  height: 310px;
+  right: -155px;
+  top: -155px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(20, 117, 212, .10), transparent 70%);
+  background:
+    radial-gradient(
+      circle,
+      rgba(20,117,212,.11),
+      transparent 70%
+    );
   pointer-events: none;
+  animation: gedCardGlow 5s ease-in-out infinite alternate;
 }
 
 .map-hint {
@@ -577,14 +765,64 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   text-align: center;
 }
 
+/* ==========================================================
+   TRANSIÇÃO DO PAINEL DE COORDENAÇÕES
+   ========================================================== */
+
 .ged-info-panel {
-  transition: opacity .18s ease, transform .18s ease;
+  transition:
+    opacity .22s ease,
+    transform .22s cubic-bezier(.2,.8,.2,1),
+    box-shadow .22s ease;
 }
 
 .ged-info-panel.is-changing {
   opacity: .55;
-  transform: translateY(5px);
+  transform: translateY(6px) scale(.995);
 }
+
+.ged-person {
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    border-color .2s ease;
+}
+
+.ged-person:hover {
+  transform: translateY(-2px);
+  border-color: rgba(20,117,212,.28);
+  box-shadow: 0 8px 18px rgba(15,49,83,.08);
+}
+
+/* ==========================================================
+   ANIMAÇÕES
+   ========================================================== */
+
+@keyframes ne2MapGlow {
+  from {
+    opacity: .65;
+    transform: scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.045);
+  }
+}
+
+@keyframes gedCardGlow {
+  from {
+    opacity: .62;
+    transform: scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
 
 @media (max-width: 850px) {
   .ne2-map-image-wrapper {
@@ -609,5 +847,32 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
   .map-hint {
     margin-top: 10px;
     font-size: 11px;
+  }
+
+  /* no celular reduz a intensidade para ficar mais limpo */
+  .ne2-map-image-wrapper::before {
+    filter: blur(18px);
+    opacity: .68;
+  }
+
+  .ne2-map-image-wrapper .map-state:hover {
+    transform: none;
+  }
+}
+
+/* acessibilidade: respeita quem desativou animações */
+@media (prefers-reduced-motion: reduce) {
+  .ne2-map-image-wrapper::before,
+  .ged-map-card::before {
+    animation: none !important;
+  }
+
+  .ne2-map-image,
+  .ne2-map-image-wrapper .map-state,
+  .ne2-map-image-wrapper .map-state::before,
+  .ne2-map-image-wrapper .map-state::after,
+  .ged-info-panel,
+  .ged-person {
+    transition: none !important;
   }
 }
