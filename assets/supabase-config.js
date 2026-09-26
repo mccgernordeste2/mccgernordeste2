@@ -150,7 +150,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
     '<div class="mcc-transition-particles"></div>'+
     '<div class="mcc-transition-center">'+
       '<div class="mcc-transition-halo"></div>'+
-      '<img class="mcc-transition-logo" src="assets/logo%20(3).png" alt="GER Nordeste 2">'+
+      '<img class="mcc-transition-logo" src="assets/logo-transicao-ger.png.png" alt="GER Nordeste 2">'+
       '<div class="mcc-transition-dots"><i></i><i></i><i></i></div>'+
     '</div>';
 
