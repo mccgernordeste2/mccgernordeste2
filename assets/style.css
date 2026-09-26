@@ -203,3 +203,14 @@
   }
   .portal-login-meta{gap:6px}
 }
+
+/* POSICIONA SAIR ABAIXO DA FUNCAO */
+.portal-login-meta{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:2px!important;
+}
+.portal-login-logout{
+  margin-top:1px!important;
+}
