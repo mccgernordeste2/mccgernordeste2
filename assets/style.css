@@ -152,3 +152,54 @@
 
 /* NOME DO USUARIO + SAIR */
 .current-user-name-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.current-user-name-row #current-user-name{font-size:20px!important;line-height:1.1!important;color:var(--navy)!important}.current-user-logout{border:0;background:transparent;color:var(--danger);font-size:11px;font-weight:900;cursor:pointer;padding:2px 0;text-decoration:underline}.current-user-logout:hover{opacity:.75}
+
+/* PERFIL LOGADO MAIOR NO PORTAL */
+.portal-login-status.portal-login-nav{
+  padding:7px 10px!important;
+  gap:9px!important;
+  border-radius:12px!important;
+}
+.portal-login-status.portal-login-nav .portal-login-avatar{
+  width:38px!important;
+  height:38px!important;
+  font-size:12px!important;
+}
+.portal-login-status.portal-login-nav .portal-login-text{
+  gap:2px!important;
+}
+.portal-login-status.portal-login-nav .portal-login-text strong{
+  font-size:13px!important;
+  line-height:1.1!important;
+  max-width:145px!important;
+}
+.portal-login-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.portal-login-status.portal-login-nav .portal-login-meta span{
+  font-size:9px!important;
+  line-height:1.1!important;
+}
+.portal-login-logout{
+  border:0;
+  background:transparent;
+  padding:0;
+  color:var(--danger);
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+  text-decoration:underline;
+}
+.portal-login-logout:hover{opacity:.72}
+@media(max-width:720px){
+  .portal-login-status.portal-login-nav .portal-login-avatar{
+    width:34px!important;
+    height:34px!important;
+  }
+  .portal-login-status.portal-login-nav .portal-login-text strong{
+    font-size:12px!important;
+    max-width:125px!important;
+  }
+  .portal-login-meta{gap:6px}
+}
