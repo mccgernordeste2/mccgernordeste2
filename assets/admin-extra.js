@@ -106,6 +106,53 @@ document.addEventListener('DOMContentLoaded',()=>{
     decorate();
   }
 
+  async function loadSidebarUser(){
+    try{
+      const {data:{user}}=await sb.auth.getUser();
+      if(!user)return;
+
+      const {data:profile}=await sb
+        .from('profiles')
+        .select('full_name,role,photo_url')
+        .eq('id',user.id)
+        .maybeSingle();
+
+      const labels={
+        administrador:'Administrador',
+        coordenador_vice:'Coordenador ou Vice',
+        colaborador_cursilhista:'Colaborador Cursilhista'
+      };
+
+      const fullName=(profile?.full_name||user.user_metadata?.full_name||user.email||'Usuário').trim();
+      const roleLabel=labels[profile?.role]||'Equipe do portal';
+
+      const nameEl=document.getElementById('sidebar-user-name');
+      const roleEl=document.getElementById('sidebar-user-role');
+      const initialsEl=document.getElementById('sidebar-user-initials');
+      const photoEl=document.getElementById('sidebar-user-photo');
+
+      if(nameEl)nameEl.textContent=fullName;
+      if(roleEl)roleEl.textContent=roleLabel;
+
+      const initials=fullName
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0,2)
+        .map(x=>x.charAt(0).toUpperCase())
+        .join('');
+
+      if(initialsEl)initialsEl.textContent=initials||'U';
+
+      if(photoEl&&profile?.photo_url){
+        photoEl.src=profile.photo_url;
+        photoEl.classList.remove('hidden');
+        if(initialsEl)initialsEl.classList.add('hidden');
+      }
+    }catch(err){
+      console.debug('Perfil lateral indisponível',err);
+    }
+  }
+
   async function loadAnalytics(){
     const dash=document.getElementById('section-dashboard');
     if(!dash||dash.querySelector('.analytics-panel')) return;
@@ -153,5 +200,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   addBackButtons();
   ensureGedEditor();
+  loadSidebarUser();
   loadAnalytics();
 });
