@@ -876,3 +876,45 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
     transition: none !important;
   }
 }
+
+
+/* AJUSTE FINO DO MAPA: REMOVE MANCHAS DAS ÁREAS CLICÁVEIS */
+.ne2-map-image-wrapper .map-state::before,
+.ne2-map-image-wrapper .map-state::after{
+  content:none!important;
+}
+
+.ne2-map-image-wrapper .map-state{
+  background:transparent!important;
+}
+
+.ne2-map-image-wrapper .map-state:hover,
+.ne2-map-image-wrapper .map-state:focus-visible{
+  transform:translateY(-2px) scale(1.012)!important;
+  filter:
+    drop-shadow(0 5px 8px rgba(0,0,0,.12))
+    drop-shadow(0 0 8px var(--state-glow))!important;
+}
+
+.ne2-map-image-wrapper .map-state.active{
+  transform:scale(1.008)!important;
+  filter:
+    drop-shadow(0 0 7px var(--state-glow))
+    drop-shadow(0 6px 10px rgba(10,44,84,.12))!important;
+}
+
+.ne2-map-image-wrapper .map-state:active{
+  transform:scale(.992)!important;
+}
+
+/* brilho do mapa inteiro mais discreto e sem blocos */
+.ne2-map-image-wrapper::before{
+  inset:8% 6%!important;
+  border-radius:50%!important;
+  filter:blur(30px)!important;
+  opacity:.42!important;
+}
+
+.ne2-map-image-wrapper::after{
+  content:none!important;
+}
