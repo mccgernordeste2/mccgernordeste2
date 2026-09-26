@@ -28,3 +28,14 @@ window.addEventListener('load',async()=>{
     console.debug('Analytics indisponível',err);
   }
 });
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const path=location.pathname||'';
+  if(path.endsWith('admin.html')||path.endsWith('configurar-admin.html')) return;
+  if(document.querySelector('.site-developer-credit')) return;
+
+  const credit=document.createElement('div');
+  credit.className='site-developer-credit';
+  credit.innerHTML='Desenvolvido por <strong>Diogo Eduardo da Luz Ferreira</strong> • UX/UI Designer &amp; Desenvolvedor Web - <strong>Luzvante Estúdio</strong>';
+  document.body.appendChild(credit);
+});
