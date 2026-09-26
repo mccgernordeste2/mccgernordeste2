@@ -156,21 +156,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
   document.body.appendChild(overlay);
 
-  try{
-    const {data:settings}=await window.mccSupabase
-      .from('site_settings')
-      .select('main_logo_url')
-      .eq('id',1)
-      .maybeSingle();
-
-    if(settings?.main_logo_url){
-      const img=overlay.querySelector('.mcc-transition-logo');
-      if(img)img.src=settings.main_logo_url;
-    }
-  }catch(err){
-    console.debug('Logo da transição usando imagem padrão',err);
-  }
-
   let navigating=false;
 
   function shouldAnimateLink(anchor,event){
