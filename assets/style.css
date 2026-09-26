@@ -401,3 +401,213 @@ html.mcc-transition-lock,html.mcc-transition-lock body{overflow:hidden}
     transform:none;
   }
 }
+/* ==========================================================
+   MAPA INTERATIVO REAL - GER NORDESTE 2
+   ========================================================== */
+
+.ne2-map-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.ne2-map-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 18px rgba(11, 45, 89, .12));
+}
+
+.ne2-map-image-wrapper .map-state {
+  position: absolute;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  transition: transform .22s ease, filter .22s ease;
+  z-index: 3;
+}
+
+.ne2-map-image-wrapper .map-state span {
+  display: none;
+}
+
+/* RN */
+.map-state-rn {
+  left: 43%;
+  top: 0%;
+  width: 57%;
+  height: 38%;
+  clip-path: polygon(
+    22% 0%,
+    54% 4%,
+    71% 10%,
+    88% 7%,
+    100% 13%,
+    96% 38%,
+    86% 41%,
+    67% 37%,
+    56% 45%,
+    43% 37%,
+    25% 35%,
+    5% 30%,
+    0% 18%
+  );
+}
+
+/* PB */
+.map-state-pb {
+  left: 38%;
+  top: 23%;
+  width: 62%;
+  height: 39%;
+  clip-path: polygon(
+    8% 5%,
+    34% 2%,
+    43% 17%,
+    67% 13%,
+    82% 20%,
+    98% 17%,
+    100% 68%,
+    80% 68%,
+    68% 79%,
+    54% 89%,
+    39% 74%,
+    27% 66%,
+    12% 62%,
+    0% 52%
+  );
+}
+
+/* PE */
+.map-state-pe {
+  left: 0%;
+  top: 42%;
+  width: 96%;
+  height: 38%;
+  clip-path: polygon(
+    0% 46%,
+    11% 23%,
+    22% 28%,
+    34% 35%,
+    43% 20%,
+    62% 19%,
+    66% 4%,
+    72% 11%,
+    77% 29%,
+    88% 29%,
+    100% 36%,
+    96% 72%,
+    84% 68%,
+    74% 77%,
+    63% 71%,
+    52% 83%,
+    41% 78%,
+    31% 72%,
+    22% 63%,
+    10% 71%
+  );
+}
+
+/* AL */
+.map-state-al {
+  left: 46%;
+  top: 68%;
+  width: 51%;
+  height: 32%;
+  clip-path: polygon(
+    5% 0%,
+    20% 20%,
+    40% 26%,
+    58% 15%,
+    76% 10%,
+    100% 6%,
+    88% 42%,
+    80% 64%,
+    69% 86%,
+    59% 100%,
+    50% 85%,
+    36% 75%,
+    20% 65%,
+    8% 45%,
+    0% 23%
+  );
+}
+
+.ne2-map-image-wrapper .map-state:hover,
+.ne2-map-image-wrapper .map-state:focus-visible {
+  transform: scale(1.025);
+  filter: drop-shadow(0 7px 9px rgba(0, 0, 0, .28));
+  outline: none;
+}
+
+.ne2-map-image-wrapper .map-state.active {
+  filter:
+    drop-shadow(0 0 9px rgba(20, 117, 212, .75))
+    drop-shadow(0 9px 10px rgba(0, 0, 0, .18));
+  transform: scale(1.018);
+}
+
+.ged-map-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ged-map-card::before {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -130px;
+  top: -130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 117, 212, .10), transparent 70%);
+  pointer-events: none;
+}
+
+.map-hint {
+  margin-top: 17px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.ged-info-panel {
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.ged-info-panel.is-changing {
+  opacity: .55;
+  transform: translateY(5px);
+}
+
+@media (max-width: 850px) {
+  .ne2-map-image-wrapper {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 520px) {
+  .ged-map-card {
+    padding: 18px;
+  }
+
+  .ged-map-card h2 {
+    font-size: 28px;
+  }
+
+  .ne2-map-image-wrapper {
+    width: 108%;
+    margin-left: -4%;
+  }
+
+  .map-hint {
+    margin-top: 10px;
+    font-size: 11px;
+  }
+}
