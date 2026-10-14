@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>GEDs — GER Nordeste 2</title>
   <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/ged-details.css">
 </head>
 <body>
 
@@ -15,7 +16,7 @@
       <div class="container">
         <div class="section-label">Estrutura Diocesana</div>
         <h1>GEDs do Nordeste 2</h1>
-        <p>Clique em um estado para conhecer os Grupos Executivos Diocesanos e suas coordenações.</p>
+        <p>Clique em um estado para conhecer os Grupos Executivos Diocesanos, suas coordenações, contatos e quantidade de setores.</p>
       </div>
     </section>
 
@@ -28,68 +29,21 @@
             <h2>Nordeste 2</h2>
 
             <div class="ne2-map-image-wrapper">
+              <img src="assets/mapa-ne2.png.png" class="ne2-map-image" alt="Mapa interativo do GER Nordeste 2 com Alagoas, Paraíba, Pernambuco e Rio Grande do Norte">
 
-              <img
-                src="assets/mapa-ne2.png.png"
-                class="ne2-map-image"
-                alt="Mapa interativo do GER Nordeste 2 com Alagoas, Paraíba, Pernambuco e Rio Grande do Norte"
-              >
-
-              <!-- RIO GRANDE DO NORTE -->
-              <button
-                type="button"
-                class="map-state map-state-rn"
-                data-state="Rio Grande do Norte"
-                aria-label="Selecionar Rio Grande do Norte"
-                title="Rio Grande do Norte"
-              >
-                <span>RN</span>
-              </button>
-
-              <!-- PARAÍBA -->
-              <button
-                type="button"
-                class="map-state map-state-pb"
-                data-state="Paraíba"
-                aria-label="Selecionar Paraíba"
-                title="Paraíba"
-              >
-                <span>PB</span>
-              </button>
-
-              <!-- PERNAMBUCO -->
-              <button
-                type="button"
-                class="map-state map-state-pe"
-                data-state="Pernambuco"
-                aria-label="Selecionar Pernambuco"
-                title="Pernambuco"
-              >
-                <span>PE</span>
-              </button>
-
-              <!-- ALAGOAS -->
-              <button
-                type="button"
-                class="map-state map-state-al active"
-                data-state="Alagoas"
-                aria-label="Selecionar Alagoas"
-                title="Alagoas"
-              >
-                <span>AL</span>
-              </button>
-
+              <button type="button" class="map-state map-state-rn" data-state="Rio Grande do Norte" aria-label="Selecionar Rio Grande do Norte" title="Rio Grande do Norte"><span>RN</span></button>
+              <button type="button" class="map-state map-state-pb" data-state="Paraíba" aria-label="Selecionar Paraíba" title="Paraíba"><span>PB</span></button>
+              <button type="button" class="map-state map-state-pe" data-state="Pernambuco" aria-label="Selecionar Pernambuco" title="Pernambuco"><span>PE</span></button>
+              <button type="button" class="map-state map-state-al active" data-state="Alagoas" aria-label="Selecionar Alagoas" title="Alagoas"><span>AL</span></button>
             </div>
 
             <p class="map-hint">Selecione AL, PB, PE ou RN.</p>
           </div>
 
           <div class="ged-info-panel">
-            <div class="section-label">Coordenações</div>
+            <div class="section-label">GEDs por estado</div>
             <h2 id="ged-state-title">Alagoas</h2>
-            <div id="ged-state-list" class="ged-list">
-              <p>Carregando...</p>
-            </div>
+            <div id="ged-state-list" class="ged-list"><p>Carregando...</p></div>
           </div>
 
         </div>
