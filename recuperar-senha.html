@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Recuperar senha — GER Nordeste 2</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .recovery-page{min-height:100vh;display:grid;place-items:center;padding:28px;background:linear-gradient(135deg,#eef6ff,#fff7ef)}
+    .recovery-card{width:min(480px,100%);background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:0 18px 50px rgba(10,44,84,.12)}
+    .recovery-logo{height:74px;width:auto;margin:0 auto 18px;object-fit:contain}
+    .recovery-card h1{font-family:Georgia,serif;color:var(--navy);font-size:31px;margin:0 0 8px;text-align:center}
+    .recovery-card>p{text-align:center;color:var(--muted);line-height:1.55;margin:0 0 22px}
+    .recovery-message{margin-top:14px;padding:12px 14px;border-radius:10px;background:#eef6ff;color:var(--navy);font-size:13px;line-height:1.5}
+    .recovery-message.success{background:#e7f7ed;color:#176b34}
+    .recovery-message.error{background:#fdeaea;color:#9b2c2c}
+    .recovery-actions{display:grid;gap:10px;margin-top:16px}
+    .recovery-back{text-align:center;margin-top:18px;font-size:13px;font-weight:800;color:var(--blue2)}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+  <main class="recovery-page">
+    <section class="recovery-card">
+      <img class="recovery-logo" src="assets/logo-transicao-ger.png.png" alt="GER Nordeste 2">
+
+      <div id="request-view">
+        <h1>Recuperar senha</h1>
+        <p>Informe o e-mail usado no painel administrativo. Você receberá um link para cadastrar uma nova senha.</p>
+        <form id="recovery-request-form">
+          <div class="field">
+            <label>E-mail</label>
+            <input type="email" name="email" autocomplete="email" required placeholder="seuemail@exemplo.com">
+          </div>
+          <div class="recovery-actions"><button class="btn blue" type="submit">Enviar link de recuperação</button></div>
+        </form>
+        <div id="request-message" class="recovery-message hidden"></div>
+      </div>
+
+      <div id="update-view" class="hidden">
+        <h1>Crie sua nova senha</h1>
+        <p>Digite uma nova senha com pelo menos 8 caracteres.</p>
+        <form id="password-update-form">
+          <div class="field">
+            <label>Nova senha</label>
+            <input type="password" name="password" minlength="8" autocomplete="new-password" required>
+          </div>
+          <div class="field space-top">
+            <label>Confirmar nova senha</label>
+            <input type="password" name="confirm_password" minlength="8" autocomplete="new-password" required>
+          </div>
+          <div class="recovery-actions"><button class="btn blue" type="submit">Salvar nova senha</button></div>
+        </form>
+        <div id="update-message" class="recovery-message hidden"></div>
+      </div>
+
+      <div class="recovery-back"><a href="admin.html">← Voltar ao login</a></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script>
+    const sb=window.mccSupabase;
+    const requestView=document.getElementById('request-view');
+    const updateView=document.getElementById('update-view');
+    const requestMessage=document.getElementById('request-message');
+    const updateMessage=document.getElementById('update-message');
+
+    function showMessage(el,text,type=''){
+      el.textContent=text;
+      el.className='recovery-message'+(type?' '+type:'');
+    }
+
+    function showUpdate(){
+      requestView.classList.add('hidden');
+      updateView.classList.remove('hidden');
+    }
+
+    async function detectRecovery(){
+      const params=new URLSearchParams(location.search);
+      if(params.get('error_description')){
+        showMessage(requestMessage,decodeURIComponent(params.get('error_description')),'error');
+      }
+
+      const {data:{session}}=await sb.auth.getSession();
+      if(session)showUpdate();
+    }
+
+    sb.auth.onAuthStateChange((event,session)=>{
+      if(event==='PASSWORD_RECOVERY'||session)showUpdate();
+    });
+
+    document.getElementById('recovery-request-form').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const form=e.currentTarget;
+      const email=String(new FormData(form).get('email')||'').trim();
+      const button=form.querySelector('button');
+      button.disabled=true;
+      button.textContent='Enviando...';
+
+      const redirectTo=location.origin+'/recuperar-senha.html';
+      const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
+
+      button.disabled=false;
+      button.textContent='Enviar link de recuperação';
+
+      if(error){
+        showMessage(requestMessage,'Não foi possível enviar o link agora. Verifique o e-mail e tente novamente.','error');
+        return;
+      }
+
+      showMessage(requestMessage,'Se este e-mail estiver cadastrado, o link de recuperação foi enviado. Verifique também a caixa de spam.','success');
+      form.reset();
+    });
+
+    document.getElementById('password-update-form').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const form=e.currentTarget;
+      const fd=new FormData(form);
+      const password=String(fd.get('password')||'');
+      const confirm=String(fd.get('confirm_password')||'');
+
+      if(password.length<8){
+        showMessage(updateMessage,'A senha precisa ter pelo menos 8 caracteres.','error');
+        return;
+      }
+      if(password!==confirm){
+        showMessage(updateMessage,'As duas senhas não são iguais.','error');
+        return;
+      }
+
+      const button=form.querySelector('button');
+      button.disabled=true;
+      button.textContent='Salvando...';
+      const {error}=await sb.auth.updateUser({password});
+      button.disabled=false;
+      button.textContent='Salvar nova senha';
+
+      if(error){
+        showMessage(updateMessage,'Não foi possível alterar a senha. O link pode ter expirado; solicite um novo.','error');
+        return;
+      }
+
+      await sb.auth.signOut();
+      showMessage(updateMessage,'Senha alterada com sucesso. Você já pode voltar ao login e entrar com a nova senha.','success');
+      form.reset();
+    });
+
+    detectRecovery();
+  </script>
+</body>
+</html>
