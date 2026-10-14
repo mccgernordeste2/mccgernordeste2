@@ -30,26 +30,26 @@ document.addEventListener('DOMContentLoaded',async()=>{
     return safe;
   }
 
-  function personBlock(label,name,email,whatsapp){
+  function personBlock(label,name,whatsapp){
     return '<div class="ged-person-block">'+
       '<div class="ged-person-role">'+escapeHtml(label)+'</div>'+
       '<strong class="ged-person-name">'+escapeHtml(value(name,'A confirmar'))+'</strong>'+
-      '<div class="ged-contact-line"><span>✉</span><div><small>E-mail</small>'+contactLink('email',email)+'</div></div>'+
       '<div class="ged-contact-line"><span>◉</span><div><small>WhatsApp</small>'+contactLink('whatsapp',whatsapp)+'</div></div>'+
     '</div>';
   }
 
   function gedCard(g){
-    const sectors=Number.isFinite(Number(g.sector_count))&&Number(g.sector_count)>=0?Number(g.sector_count):null;
+    const sectors=Number.isFinite(Number(g.sectors_count))&&Number(g.sectors_count)>=0?Number(g.sectors_count):null;
     return '<article class="ged-detail-card">'+
       '<div class="ged-detail-head">'+
         '<div><span class="ged-state-badge">'+escapeHtml(g.state||'')+'</span><h3>'+escapeHtml(g.name)+'</h3></div>'+
         '<div class="ged-sector-count"><strong>'+(sectors===null?'—':sectors)+'</strong><span>'+(sectors===1?'setor':'setores')+'</span></div>'+
       '</div>'+
       '<div class="ged-leadership-grid">'+
-        personBlock('Coordenador(a)',g.coordinator,g.coordinator_email,g.coordinator_whatsapp)+
-        personBlock('Vice-coordenador(a)',g.vice_coordinator,g.vice_email,g.vice_whatsapp)+
+        personBlock('Coordenador(a)',g.coordinator,g.coordinator_whatsapp)+
+        personBlock('Vice-coordenador(a)',g.vice_coordinator,g.vice_whatsapp)+
       '</div>'+
+      '<div class="ged-contact-line ged-main-email"><span>✉</span><div><small>E-mail principal do GED</small>'+contactLink('email',g.email)+'</div></div>'+
     '</article>';
   }
 
