@@ -12,6 +12,9 @@ window.addEventListener('load',async()=>{
     const e=document.createElement('script');
     e.src='assets/admin-post-edit.js';
     document.body.appendChild(e);
+    const g=document.createElement('script');
+    g.src='assets/ged-admin-enhance.js';
+    document.body.appendChild(g);
     return;
   }
 
