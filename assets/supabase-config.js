@@ -10,7 +10,7 @@ window.addEventListener('load',async()=>{
     s.src='assets/admin-extra.js';
     document.body.appendChild(s);
     const e=document.createElement('script');
-    e.src='assets/admin-post-edit.js';
+    e.src='assets/admin-force-edit-v2.js?v=2';
     document.body.appendChild(e);
     const g=document.createElement('script');
     g.src='assets/ged-admin-enhance.js';
@@ -138,7 +138,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
     console.debug('Identificação de usuário indisponível',err);
   }
 });
-
 
 /* Transição visual entre páginas internas do portal */
 window.addEventListener('DOMContentLoaded',async()=>{
