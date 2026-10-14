@@ -14,6 +14,31 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
   }
 
+  function makeDashboardStatsClickable(){
+    const targets=[
+      ['stat-news','posts','Abrir e editar postagens'],
+      ['stat-pending','pending','Abrir publicações aguardando aprovação'],
+      ['stat-events','events','Abrir agenda de eventos'],
+      ['stat-geds','geds','Abrir cadastro de GEDs']
+    ];
+    targets.forEach(([id,section,label])=>{
+      const value=document.getElementById(id);
+      const card=value?.closest('.stat');
+      if(!card||card.dataset.dashboardLink==='1')return;
+      card.dataset.dashboardLink='1';
+      card.setAttribute('role','button');
+      card.setAttribute('tabindex','0');
+      card.setAttribute('aria-label',label);
+      card.title=label;
+      card.style.cursor='pointer';
+      card.style.transition='transform .16s ease, box-shadow .16s ease, border-color .16s ease';
+      card.addEventListener('mouseenter',()=>{card.style.transform='translateY(-2px)';card.style.boxShadow='0 10px 24px rgba(0,69,140,.10)';card.style.borderColor='rgba(10,115,215,.35)'});
+      card.addEventListener('mouseleave',()=>{card.style.transform='';card.style.boxShadow='';card.style.borderColor=''});
+      card.addEventListener('click',()=>showSection(section));
+      card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showSection(section)}});
+    });
+  }
+
   function ensureGedEditor(){
     const form=document.getElementById('ged-form');
     const list=document.getElementById('ged-list');
@@ -199,6 +224,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 
   addBackButtons();
+  makeDashboardStatsClickable();
   ensureGedEditor();
   loadSidebarUser();
   loadAnalytics();
