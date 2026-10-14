@@ -14,6 +14,25 @@
       [...sel.options].forEach(o=>o.selected=o.text===name);
     }
 
+    function ensureCoverPreview(){
+      let box=document.getElementById('current-cover-box');
+      if(box)return box;
+      const input=form.querySelector('input[name="cover"]');
+      const upload=input?.closest('.upload-box');
+      const field=upload?.closest('.field');
+      if(!field)return null;
+      const label=field.querySelector('label');
+      if(label)label.textContent='Imagem de capa';
+      box=document.createElement('div');
+      box.id='current-cover-box';
+      box.className='current-cover-box hidden';
+      box.innerHTML='<div class="current-cover-copy"><strong>Imagem atual</strong><small>Escolha uma nova imagem abaixo para substituir a capa.</small></div><img id="current-cover-preview" alt="Imagem de capa atual">';
+      field.insertBefore(box,upload);
+      const help=upload.querySelector('p');
+      if(help)help.textContent='Clique em escolher arquivo para adicionar ou substituir a imagem de capa.';
+      return box;
+    }
+
     function resetPublishedEdit(){
       editingPublishedId=null;
       form.reset();
@@ -24,6 +43,8 @@
       if(cancel)cancel.classList.add('hidden');
       const title=document.querySelector('#section-posts .admin-panel h2');
       if(title)title.textContent='Nova postagem';
+      const box=document.getElementById('current-cover-box');
+      if(box)box.classList.add('hidden');
     }
 
     function ensureCancel(){
@@ -58,6 +79,14 @@
       ensureCancel().classList.remove('hidden');
       const title=document.querySelector('#section-posts .admin-panel h2');
       if(title)title.textContent='Editar postagem';
+
+      const box=ensureCoverPreview();
+      const img=document.getElementById('current-cover-preview');
+      if(box&&img){
+        if(p.cover_url){img.src=p.cover_url;box.classList.remove('hidden')}
+        else{img.removeAttribute('src');box.classList.add('hidden')}
+      }
+
       if(typeof showSection==='function')showSection('posts');
       form.scrollIntoView({behavior:'smooth',block:'start'});
     }
@@ -148,6 +177,7 @@
       });
     }
 
+    ensureCoverPreview();
     const observer=new MutationObserver(decorate);
     observer.observe(list,{childList:true,subtree:true});
     decorate();
