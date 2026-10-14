@@ -9,6 +9,9 @@ window.addEventListener('load',async()=>{
     const s=document.createElement('script');
     s.src='assets/admin-extra.js';
     document.body.appendChild(s);
+    const e=document.createElement('script');
+    e.src='assets/admin-post-edit.js';
+    document.body.appendChild(e);
     return;
   }
 
