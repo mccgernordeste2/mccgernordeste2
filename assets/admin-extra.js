@@ -203,3 +203,27 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadSidebarUser();
   loadAnalytics();
 });
+
+/* Recuperação de senha no login administrativo */
+(()=>{
+  function addRecoveryLink(){
+    const form=document.getElementById('login-form');
+    if(!form||form.querySelector('.forgot-password-link'))return;
+    const actions=form.querySelector('.form-actions');
+    if(!actions)return;
+    const wrap=document.createElement('div');
+    wrap.style.textAlign='center';
+    wrap.style.marginTop='12px';
+    const link=document.createElement('a');
+    link.href='recuperar-senha.html';
+    link.className='forgot-password-link';
+    link.textContent='Esqueci minha senha';
+    link.style.color='var(--blue2)';
+    link.style.fontWeight='800';
+    link.style.fontSize='13px';
+    wrap.appendChild(link);
+    actions.insertAdjacentElement('afterend',wrap);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addRecoveryLink);
+  else addRecoveryLink();
+})();
