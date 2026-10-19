@@ -59,6 +59,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 window.addEventListener('DOMContentLoaded',async()=>{
   try{
+    const cleanPath=((location.pathname||'/').replace(/\/+$/,'')||'/');
+    if(cleanPath==='/admin'||cleanPath.endsWith('/admin.html')||cleanPath==='/configurar-admin'||cleanPath.endsWith('/configurar-admin.html')) return;
     const {data:{session}}=await window.mccSupabase.auth.getSession();
     if(!session)return;
 
