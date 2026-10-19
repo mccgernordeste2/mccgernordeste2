@@ -34,16 +34,51 @@ async function ensureAdmin(session){
 }
 
 async function loadData(){
- const [{data:geds},{data:posts},{data:pending},{data:events},{data:docs},{data:settings}]=await Promise.all([
-  sb.from('geds').select('*').order('state').order('name'),
-  sb.from('posts').select('*,geds(name),post_images(*)').eq('status','published').order('published_at',{ascending:false}),
-  sb.from('posts').select('*,geds(name),post_images(*)').in('status',['review','draft']).eq('source_type','public').order('created_at',{ascending:false}),
-  sb.from('events').select('*,geds(name)').order('event_date',{ascending:true}),
-  sb.from('documents').select('*').order('created_at',{ascending:false}),
-  sb.from('site_settings').select('*').eq('id',1).maybeSingle()
- ]);
- state.geds=geds||[];state.posts=posts||[];state.pending=pending||[];state.events=events||[];state.docs=docs||[];state.settings=settings||null;
- renderAll();
+ let loaded=false;
+ try{
+  const {data,error}=await sb.rpc('get_admin_portal_data');
+  if(error) throw error;
+  const payload=data||{};
+  state.geds=Array.isArray(payload.geds)?payload.geds:[];
+  state.posts=Array.isArray(payload.posts)?payload.posts:[];
+  state.pending=Array.isArray(payload.pending)?payload.pending:[];
+  state.events=Array.isArray(payload.events)?payload.events:[];
+  state.docs=Array.isArray(payload.docs)?payload.docs:[];
+  state.settings=payload.settings||null;
+  loaded=true;
+ }catch(err){
+  console.error('Falha ao carregar painel via RPC',err);
+  try{
+   const results=await Promise.all([
+    sb.from('geds').select('*').order('state').order('name'),
+    sb.from('posts').select('*,geds(name),post_images(*)').eq('status','published').order('published_at',{ascending:false}),
+    sb.from('posts').select('*,geds(name),post_images(*)').in('status',['review','draft']).eq('source_type','public').order('created_at',{ascending:false}),
+    sb.from('events').select('*,geds(name)').order('event_date',{ascending:true}),
+    sb.from('documents').select('*').order('created_at',{ascending:false}),
+    sb.from('site_settings').select('*').eq('id',1).maybeSingle()
+   ]);
+   const firstError=results.find(r=>r?.error)?.error;
+   if(firstError) throw firstError;
+   const [geds,posts,pending,events,docs,settings]=results;
+   state.geds=geds.data||[];state.posts=posts.data||[];state.pending=pending.data||[];state.events=events.data||[];state.docs=docs.data||[];state.settings=settings.data||null;
+   loaded=true;
+  }catch(fallbackErr){
+   console.error('Falha ao carregar painel',fallbackErr);
+   const panel=document.querySelector('#section-dashboard .admin-panel');
+   if(panel && !document.getElementById('admin-load-error')){
+    const warn=document.createElement('div');
+    warn.id='admin-load-error';
+    warn.className='login-message';
+    warn.style.marginTop='16px';
+    warn.textContent='Não foi possível carregar os dados do painel. Atualize a página. Se continuar, saia e entre novamente.';
+    panel.appendChild(warn);
+   }
+  }
+ }
+ if(loaded){
+  document.getElementById('admin-load-error')?.remove();
+  renderAll();
+ }
 }
 function renderAll(){
  const id=x=>document.getElementById(x);
@@ -152,9 +187,26 @@ function bindAppearancePreviews(){
 
 document.addEventListener('DOMContentLoaded',async()=>{
  const login=document.getElementById('login-view'),admin=document.getElementById('admin-view'),msg=document.getElementById('login-message');
+
+ // A navegação do painel é ativada antes de qualquer consulta ao banco.
+ document.querySelectorAll('.sidebar nav button').forEach(b=>{
+  b.onclick=()=>showSection(b.dataset.section);
+ });
+ const newPostBtn=document.querySelector('.dashboard-new-post');
+ if(newPostBtn)newPostBtn.onclick=()=>showSection('posts');
  const pw=document.getElementById('admin-password');document.getElementById('toggle-password').onclick=()=>{pw.type=pw.type==='password'?'text':'password'};
- const {data:{session}}=await sb.auth.getSession();
- if(session&&await ensureAdmin(session)){showAdmin();await loadData();bindAppearancePreviews()}else showLogin();
+ let session=null;
+ try{
+  const res=await sb.auth.getSession();
+  session=res?.data?.session||null;
+ }catch(err){
+  console.error('Falha ao verificar sessão',err);
+ }
+ if(session&&await ensureAdmin(session)){
+  showAdmin();
+  await loadData();
+  bindAppearancePreviews();
+ }else showLogin();
  document.getElementById('login-form').onsubmit=async ev=>{
   ev.preventDefault();const fd=new FormData(ev.target);msg.textContent='Entrando...';
   const {data,error}=await sb.auth.signInWithPassword({email:String(fd.get('email')||'').trim(),password:String(fd.get('password')||'')});
