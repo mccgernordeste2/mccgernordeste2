@@ -117,6 +117,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     const personRole=card.querySelector('.regional-member-copy span')?.textContent?.trim()||'';
     const pos=[...avatar.classList].find(c=>/^p\d+$/.test(c));
     photo.className='team-profile-photo '+(pos||'');
+    const teamSection=document.querySelector('.regional-team-section');
+    const teamSprite=teamSection?getComputedStyle(teamSection).getPropertyValue('--team-sprite').trim():'';
+    if(teamSprite)photo.style.backgroundImage=teamSprite;
     photo.setAttribute('aria-label','Foto de '+personName);
     name.textContent=personName;
     role.textContent=personRole;
