@@ -15,6 +15,9 @@ window.addEventListener('load',async()=>{
     const g=document.createElement('script');
     g.src='assets/ged-admin-enhance.js';
     document.body.appendChild(g);
+    const a=document.createElement('script');
+    a.src='assets/analytics-admin.js?v=1';
+    document.body.appendChild(a);
     return;
   }
 
@@ -30,6 +33,22 @@ window.addEventListener('load',async()=>{
       p_path:path,
       p_session_id:visitorId
     });
+
+    const {data:totalViews}=await window.mccSupabase.rpc('get_public_view_total');
+    if(totalViews!==null && totalViews!==undefined){
+      const counter=document.createElement('div');
+      counter.className='site-view-counter';
+      counter.title='Visualizações do portal';
+      counter.setAttribute('aria-label',String(totalViews)+' visualizações do portal');
+      counter.innerHTML='<span class="site-view-eye" aria-hidden="true">◉</span><strong>'+Number(totalViews).toLocaleString('pt-BR')+'</strong>';
+      const top=document.querySelector('.top-strip .container');
+      if(top){
+        top.appendChild(counter);
+      }else{
+        counter.classList.add('site-view-counter-floating');
+        document.body.appendChild(counter);
+      }
+    }
   }catch(err){
     console.debug('Analytics indisponível',err);
   }
