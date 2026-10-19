@@ -7,21 +7,7 @@ window.addEventListener('load',async()=>{
   const isAdmin=cleanPath==='/admin'||cleanPath.endsWith('/admin.html');
   const isAdminSetup=cleanPath==='/configurar-admin'||cleanPath.endsWith('/configurar-admin.html');
 
-  if(isAdmin){
-    const s=document.createElement('script');
-    s.src='assets/admin-extra.js';
-    document.body.appendChild(s);
-    const e=document.createElement('script');
-    e.src='assets/admin-force-edit-v2.js?v=2';
-    document.body.appendChild(e);
-    const g=document.createElement('script');
-    g.src='assets/ged-admin-enhance.js';
-    document.body.appendChild(g);
-    const a=document.createElement('script');
-    a.src='assets/analytics-admin.js?v=1';
-    document.body.appendChild(a);
-    return;
-  }
+  if(isAdmin) return;
 
   if(isAdminSetup) return;
 
