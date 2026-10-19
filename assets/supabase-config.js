@@ -3,7 +3,9 @@ window.MCC_SUPABASE_KEY='sb_publishable_1CRWbMPTKqxfTGnlKnhdjQ_DAdWPRtL';
 window.mccSupabase = window.supabase.createClient(window.MCC_SUPABASE_URL, window.MCC_SUPABASE_KEY);
 
 window.addEventListener('load',async()=>{
-  const isAdmin=location.pathname.endsWith('/admin.html')||location.pathname.endsWith('admin.html');
+  const cleanPath=(location.pathname||'/').replace(/\/+$/,'')||'/';
+  const isAdmin=cleanPath==='/admin'||cleanPath.endsWith('/admin.html');
+  const isAdminSetup=cleanPath==='/configurar-admin'||cleanPath.endsWith('/configurar-admin.html');
 
   if(isAdmin){
     const s=document.createElement('script');
@@ -21,6 +23,8 @@ window.addEventListener('load',async()=>{
     return;
   }
 
+  if(isAdminSetup) return;
+
   try{
     let visitorId=localStorage.getItem('mcc_visitor_id');
     if(!visitorId){
@@ -34,15 +38,17 @@ window.addEventListener('load',async()=>{
       p_session_id:visitorId
     });
 
-    const {data:totalViews}=await window.mccSupabase.rpc('get_public_view_total');
-    if(totalViews!==null && totalViews!==undefined){
+    const {data:uniqueVisitors}=await window.mccSupabase.rpc('get_public_view_total');
+    if(uniqueVisitors!==null && uniqueVisitors!==undefined){
       const counter=document.createElement('div');
       counter.className='site-view-counter';
-      counter.title='Visualizações do portal';
-      counter.setAttribute('aria-label',String(totalViews)+' visualizações do portal');
-      counter.innerHTML='<span class="site-view-eye" aria-hidden="true">◉</span><strong>'+Number(totalViews).toLocaleString('pt-BR')+'</strong>';
+      counter.title='Visitantes únicos do portal';
+      counter.setAttribute('aria-label',String(uniqueVisitors)+' visitantes únicos do portal');
+      counter.innerHTML='<span class="site-view-eye" aria-hidden="true">👁</span><strong>'+Number(uniqueVisitors).toLocaleString('pt-BR')+'</strong>';
+
       const top=document.querySelector('.top-strip .container');
       if(top){
+        counter.classList.add('site-view-counter-top');
         top.appendChild(counter);
       }else{
         counter.classList.add('site-view-counter-floating');
@@ -55,8 +61,8 @@ window.addEventListener('load',async()=>{
 });
 
 window.addEventListener('DOMContentLoaded',()=>{
-  const path=location.pathname||'';
-  if(path.endsWith('admin.html')||path.endsWith('configurar-admin.html')) return;
+  const path=((location.pathname||'/').replace(/\/+$/,'')||'/');
+  if(path==='/admin'||path.endsWith('/admin.html')||path==='/configurar-admin'||path.endsWith('/configurar-admin.html')) return;
   if(document.querySelector('.site-developer-credit')) return;
 
   const credit=document.createElement('div');
